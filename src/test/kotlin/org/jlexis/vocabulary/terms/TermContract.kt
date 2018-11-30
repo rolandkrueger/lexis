@@ -1,6 +1,5 @@
 package org.jlexis.vocabulary.terms
 
-import org.jlexis.vocabulary.terms.AbstractTerm.EmptyTerm
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat

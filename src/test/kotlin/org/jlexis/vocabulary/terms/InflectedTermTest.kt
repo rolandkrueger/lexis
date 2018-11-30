@@ -2,8 +2,6 @@ package org.jlexis.vocabulary.terms
 
 import com.sun.org.glassfish.gmbal.Description
 import org.jlexis.tests.KotlinParameterizedTest
-import org.jlexis.vocabulary.terms.AbstractTerm.InflectedTerm
-import org.jlexis.vocabulary.terms.AbstractTerm.WordStemTerm
 import org.jlexis.vocabulary.terms.TermInput.TermCanonicalInput
 import org.jlexis.vocabulary.terms.TermInput.TermUserInput
 import org.junit.jupiter.api.Assertions
@@ -17,10 +15,10 @@ import strikt.assertions.isEqualTo
 import java.util.stream.Stream
 
 @KotlinParameterizedTest
-internal class InflectedTermTest : TermContract<InflectedTerm> {
-    override fun createEmptyTerm(): InflectedTerm = InflectedTerm(TermUserInput(""), WordStemTerm(TermUserInput("")))
-    override fun createFromUserInput(input: String): InflectedTerm = InflectedTerm(TermUserInput(input), WordStemTerm(TermUserInput("word|stem")))
-    override fun createFromCanonicalInput(input: String): InflectedTerm = InflectedTerm(TermCanonicalInput(input), WordStemTerm(TermUserInput("word|stem")))
+internal class InflectedTermTest : TermContract<Term> {
+    override fun createEmptyTerm(): Term = Term(TermUserInput(""))
+    override fun createFromUserInput(input: String): Term = Term(TermUserInput(input))
+    override fun createFromCanonicalInput(input: String): Term = Term(TermCanonicalInput(input))
 
     private fun provideTestArguments(): Stream<Arguments> =
             Stream.of(
@@ -34,11 +32,11 @@ internal class InflectedTermTest : TermContract<InflectedTerm> {
     @MethodSource("provideTestArguments")
     @Description("test proper resolution of inflected terms")
     fun `test proper resolution of inflected terms`(wordStemInput: String, inflectedTermInput: String, expectedDisplayString: String) {
-        val inflectedTerm = InflectedTerm(TermUserInput(inflectedTermInput), WordStemTerm(TermUserInput(wordStemInput)))
+        val inflectedTerm = Term(TermUserInput(inflectedTermInput))
 
         expectThat(inflectedTerm) {
-            get { getResolvedWordStem() }
-                    .isA<AbstractTerm.RegularTerm>()
+            get { getResolvedInflectedTerm(Term(TermUserInput(wordStemInput))) }
+                    .isA<Term>()
                     .and {
                         get { getDisplayString() }.isEqualTo(expectedDisplayString)
                     }
@@ -51,12 +49,12 @@ internal class InflectedTermTest : TermContract<InflectedTerm> {
         Assertions.assertFalse(testedValue.isBlank())
     }
 
-        fun provideTestArguments2(): Stream<Arguments> =
-                Stream.of(
-                        Arguments.of("", 0),
-                        Arguments.of("foo", 3),
-                        Arguments.of("kotlin", 6)
-                )
+    fun provideTestArguments2(): Stream<Arguments> =
+            Stream.of(
+                    Arguments.of("", 0),
+                    Arguments.of("foo", 3),
+                    Arguments.of("kotlin", 6)
+            )
 
     @ParameterizedTest
     @MethodSource("provideTestArguments2")

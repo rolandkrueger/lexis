@@ -2,7 +2,6 @@ package org.jlexis.vocabulary.terms
 
 import com.sun.org.glassfish.gmbal.Description
 import org.jlexis.tests.KotlinParameterizedTest
-import org.jlexis.vocabulary.terms.AbstractTerm.WordStemTerm
 import org.jlexis.vocabulary.terms.TermInput.TermCanonicalInput
 import org.jlexis.vocabulary.terms.TermInput.TermUserInput
 import org.junit.jupiter.params.ParameterizedTest
@@ -14,10 +13,10 @@ import strikt.assertions.isEqualTo
 import java.util.stream.Stream
 
 @KotlinParameterizedTest
-internal class WordStemTermTest : TermContract<WordStemTerm> {
-    override fun createEmptyTerm(): WordStemTerm = WordStemTerm(TermUserInput(""))
-    override fun createFromUserInput(input: String): WordStemTerm = WordStemTerm(TermUserInput(input))
-    override fun createFromCanonicalInput(input: String): WordStemTerm = WordStemTerm(TermCanonicalInput(input))
+internal class WordStemTermTest : TermContract<Term> {
+    override fun createEmptyTerm(): Term = Term(TermUserInput(""))
+    override fun createFromUserInput(input: String): Term = Term(TermUserInput(input))
+    override fun createFromCanonicalInput(input: String): Term = Term(TermCanonicalInput(input))
 
     private fun provideWordStems(): Stream<Arguments> =
             Stream.of(
