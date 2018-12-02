@@ -14,9 +14,9 @@ import java.util.stream.Stream
 
 @KotlinParameterizedTest
 internal class WordStemTermTest : TermContract<Term> {
-    override fun createEmptyTerm(): Term = Term(TermUserInput(""))
-    override fun createFromUserInput(input: String): Term = Term(TermUserInput(input))
-    override fun createFromCanonicalInput(input: String): Term = Term(TermCanonicalInput(input))
+    override fun createEmptyTerm(): Term = Term.fromUserInput("")
+    override fun createFromUserInput(input: String): Term = Term.fromUserInput(input)
+    override fun createFromCanonicalInput(input: String): Term = Term.fromCanonicalInput(input)
 
     private fun provideWordStems(): Stream<Arguments> =
             Stream.of(

@@ -65,11 +65,16 @@ import org.jlexis.vocabulary.terms.TermInput.TermCanonicalInput
  *
  * @param input The term data given either as a [TermInput.TermUserInput] or as a [TermInput.TermCanonicalInput].
  */
-open class Term(input: TermInput) {
+open class Term protected constructor(input: TermInput) {
 
     private val _canonicalRepresentation: String = input.toCanonicalInput()
     private val _userInput: String = input.toUserInput()
     private val _displayString: String = input.toDisplayString()
+
+    companion object {
+        fun fromUserInput(input: String) = Term(TermInput.TermUserInput(input))
+        fun fromCanonicalInput(canonicalInput: String) = Term(TermInput.TermCanonicalInput(canonicalInput))
+    }
 
     /**
      * Returns the term data as originally entered by the user.

@@ -2,8 +2,6 @@ package org.jlexis.vocabulary.terms
 
 import com.sun.org.glassfish.gmbal.Description
 import org.jlexis.tests.KotlinParameterizedTest
-import org.jlexis.vocabulary.terms.TermInput.TermCanonicalInput
-import org.jlexis.vocabulary.terms.TermInput.TermUserInput
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -16,9 +14,9 @@ import java.util.stream.Stream
 
 @KotlinParameterizedTest
 internal class InflectedTermTest : TermContract<Term> {
-    override fun createEmptyTerm(): Term = Term(TermUserInput(""))
-    override fun createFromUserInput(input: String): Term = Term(TermUserInput(input))
-    override fun createFromCanonicalInput(input: String): Term = Term(TermCanonicalInput(input))
+    override fun createEmptyTerm(): Term = Term.fromUserInput("")
+    override fun createFromUserInput(input: String): Term = Term.fromUserInput(input)
+    override fun createFromCanonicalInput(input: String): Term = Term.fromCanonicalInput(input)
 
     private fun provideTestArguments(): Stream<Arguments> =
             Stream.of(
@@ -32,10 +30,10 @@ internal class InflectedTermTest : TermContract<Term> {
     @MethodSource("provideTestArguments")
     @Description("test proper resolution of inflected terms")
     fun `test proper resolution of inflected terms`(wordStemInput: String, inflectedTermInput: String, expectedDisplayString: String) {
-        val inflectedTerm = Term(TermUserInput(inflectedTermInput))
+        val inflectedTerm = Term.fromUserInput(inflectedTermInput)
 
         expectThat(inflectedTerm) {
-            get { getResolvedInflectedTerm(Term(TermUserInput(wordStemInput))) }
+            get { getResolvedInflectedTerm(Term.fromUserInput(wordStemInput)) }
                     .isA<Term>()
                     .and {
                         get { getDisplayString() }.isEqualTo(expectedDisplayString)
