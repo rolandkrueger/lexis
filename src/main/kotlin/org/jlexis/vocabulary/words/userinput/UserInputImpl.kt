@@ -11,7 +11,7 @@ typealias RegisteredWordStemTermKey = RegisteredDataKey
 typealias RegisteredInflectedTermKey = RegisteredDataKey
 typealias RegisteredTermKey = RegisteredDataKey
 
-abstract class AbstractUserInput() {
+open class UserInputImpl : UserInput {
 
     private val terms by lazy { HashMap<RegisteredTermKey, Term>(8) }
     private val registeredTermKeys by lazy { HashSet<RegisteredTermKey>(8) }
@@ -27,12 +27,12 @@ abstract class AbstractUserInput() {
         return this.getOrDefault(key, EmptyTerm)
     }
 
-    protected fun removeTerm(key: RegisteredTermKey) {
+    override fun removeTerm(key: RegisteredTermKey) {
         validateTermKey(key)
         terms.remove(key)
     }
 
-    fun setTerm(key: RegisteredTermKey, input: Term) {
+    override fun setTerm(key: RegisteredTermKey, input: Term) {
         validateTermKey(key)
         if (input.isEmpty()) {
             removeTerm(key)
@@ -41,12 +41,12 @@ abstract class AbstractUserInput() {
         }
     }
 
-    fun getTerm(key: RegisteredTermKey): Term {
+    override fun getTerm(key: RegisteredTermKey): Term {
         validateTermKey(key)
         return terms.getOrDefaultToEmpty(key)
     }
 
-    protected fun getResolvedInflectedTerm(inflectedTermKey: RegisteredInflectedTermKey): Term {
+    override fun getResolvedInflectedTerm(inflectedTermKey: RegisteredInflectedTermKey): Term {
         validateTermKey(inflectedTermKey)
         val wordStemKey = wordStemsForInflectedTerms[inflectedTermKey]
                 ?: throw IllegalArgumentException("Given term key has not been connected with a word stem term.")
@@ -55,17 +55,17 @@ abstract class AbstractUserInput() {
                 .getResolvedInflectedTerm(terms.getOrDefaultToEmpty(wordStemKey))
     }
 
-    fun isEmpty(): Boolean = terms.values.all { it.isEmpty() }
+    override fun isEmpty(): Boolean = terms.values.all { it.isEmpty() }
 
-    protected fun isTermEmpty(key: RegisteredTermKey): Boolean = terms.getOrDefaultToEmpty(key).isEmpty()
+    override fun isTermEmpty(key: RegisteredTermKey): Boolean = terms.getOrDefaultToEmpty(key).isEmpty()
 
-    protected fun connectInflectedTermWithWordStem(inflectedTermKey: RegisteredInflectedTermKey, wordStemKey: RegisteredWordStemTermKey) {
+    override fun connectInflectedTermWithWordStem(inflectedTermKey: RegisteredInflectedTermKey, wordStemKey: RegisteredWordStemTermKey) {
         registerTermKey(inflectedTermKey)
         registerTermKey(wordStemKey)
         wordStemsForInflectedTerms[inflectedTermKey] = wordStemKey
     }
 
-    protected fun registerTermKey(key: RegisteredTermKey) {
+    override fun registerTermKey(key: RegisteredTermKey) {
         registeredTermKeys.add(key.validated())
     }
 
@@ -76,7 +76,7 @@ abstract class AbstractUserInput() {
         }
     }
 
-    fun setFlag(forKey: RegisteredDataKey, flag: Boolean?) {
+    override fun setFlag(forKey: RegisteredDataKey, flag: Boolean?) {
         validateFlagKey(forKey)
         when {
             flag != null -> flags[forKey] = flag
@@ -84,12 +84,12 @@ abstract class AbstractUserInput() {
         }
     }
 
-    fun getFlag(forKey: RegisteredDataKey): Boolean? {
+    override fun getFlag(forKey: RegisteredDataKey): Boolean? {
         validateFlagKey(forKey)
         return flags[forKey]
     }
 
-    protected fun registerFlagKey(key: RegisteredDataKey) {
+    override fun registerFlagKey(key: RegisteredDataKey) {
         flagKeys.add(key)
     }
 
@@ -100,7 +100,7 @@ abstract class AbstractUserInput() {
         }
     }
 
-    fun setConfiguration(forKey: RegisteredDataKey, value: String?) {
+    override fun setConfiguration(forKey: RegisteredDataKey, value: String?) {
         validateConfigurationKey(forKey)
         when {
             value != null -> configuration[forKey] = value
@@ -108,12 +108,12 @@ abstract class AbstractUserInput() {
         }
     }
 
-    fun getConfiguration(forKey: RegisteredDataKey): String? {
+    override fun getConfiguration(forKey: RegisteredDataKey): String? {
         validateConfigurationKey(forKey)
         return configuration[forKey]
     }
 
-    protected fun registerConfigurationKey(key: RegisteredDataKey) {
+    override fun registerConfigurationKey(key: RegisteredDataKey) {
         configurationKeys.add(key)
 
     }
