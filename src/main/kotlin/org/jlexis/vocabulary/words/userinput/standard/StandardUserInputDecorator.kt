@@ -14,10 +14,9 @@ open class StandardUserInputDecorator<T : UserInput>(val delegatedUserInput: T, 
     var description: Term by UserInputTermPropertyDelegate(descriptionKey)
     var example: Term by UserInputTermPropertyDelegate(exampleKey)
     var phonetics: Term by UserInputTermPropertyDelegate(phoneticsKey)
-    var pronunciationHint: Term by UserInputTermPropertyDelegate(pronunciationHintKey)
 
     init {
-        listOf(descriptionKey, exampleKey, phoneticsKey, pronunciationHintKey).forEach {
+        listOf(descriptionKey, exampleKey, phoneticsKey).forEach {
             registerTermKey(it)
         }
     }
