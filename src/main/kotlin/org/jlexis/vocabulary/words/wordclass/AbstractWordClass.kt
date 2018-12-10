@@ -1,11 +1,10 @@
 package org.jlexis.vocabulary.words.wordclass
 
-import org.jlexis.vocabulary.words.userinput.UserInputImpl
-import java.lang.IllegalArgumentException
+import org.jlexis.vocabulary.words.userinput.UserInput
 
 abstract class AbstractWordClass(val wordClassEnum: WordClassEnum = WordClassEnum.DEFAULT, val identifier: String) {
 
-    abstract fun createUserInputObject(): UserInputImpl
+    abstract fun createUserInputObject(): UserInput
 
     init {
         if (identifier.isBlank()) {

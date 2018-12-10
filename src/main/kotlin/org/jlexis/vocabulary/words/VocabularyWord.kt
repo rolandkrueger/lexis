@@ -1,11 +1,11 @@
 package org.jlexis.vocabulary.words
 
 import org.jlexis.vocabulary.language.Language
-import org.jlexis.vocabulary.words.userinput.UserInputImpl
+import org.jlexis.vocabulary.words.userinput.UserInput
 import org.jlexis.vocabulary.words.wordclass.AbstractWordClass
 
 class VocabularyWord {
-    private val translations = HashMap<Language, Pair<AbstractWordClass, UserInputImpl>>(2)
+    private val translations = HashMap<Language, Pair<AbstractWordClass, UserInput>>(2)
 
     fun addTranslation(forLanguage: Language, wordClass: AbstractWordClass) {
         translations[forLanguage] = Pair(wordClass, wordClass.createUserInputObject())
