@@ -4,7 +4,7 @@ import org.jlexis.vocabulary.terms.Term
 
 class DefaultUserInput() : UserInputImpl() {
     companion object {
-        val DEFAULT_TERM_KEY = RegisteredTermKey("DEFAULT_TERM")
+        val DEFAULT_TERM_KEY = RegisteredTermKey("default.term")
     }
 
     var term : Term by UserInputTermPropertyDelegate(DEFAULT_TERM_KEY)

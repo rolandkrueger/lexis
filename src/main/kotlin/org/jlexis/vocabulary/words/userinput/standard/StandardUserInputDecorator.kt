@@ -7,10 +7,9 @@ import org.jlexis.vocabulary.words.userinput.UserInputImpl
 import org.jlexis.vocabulary.words.userinput.UserInputTermPropertyDelegate
 
 open class StandardUserInputDecorator<T : UserInput>(val delegatedUserInput: T, keyPrefix: String) : UserInput by delegatedUserInput {
-    val descriptionKey = RegisteredTermKey("$keyPrefix.DESCRIPTION")
-    val exampleKey = RegisteredTermKey("$keyPrefix.EXAMPLE")
-    val phoneticsKey = RegisteredTermKey("$keyPrefix.PHONETICS")
-    val pronunciationHintKey = RegisteredTermKey("$keyPrefix.PRONUNCIATION_HINT")
+    val descriptionKey = RegisteredTermKey("$keyPrefix.description")
+    val exampleKey = RegisteredTermKey("$keyPrefix.example")
+    val phoneticsKey = RegisteredTermKey("$keyPrefix.phonetics")
 
     var description: Term by UserInputTermPropertyDelegate(descriptionKey)
     var example: Term by UserInputTermPropertyDelegate(exampleKey)
