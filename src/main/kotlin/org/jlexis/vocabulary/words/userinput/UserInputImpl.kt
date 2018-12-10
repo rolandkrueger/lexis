@@ -3,7 +3,15 @@ package org.jlexis.vocabulary.words.userinput
 import org.jlexis.vocabulary.terms.EmptyTerm
 import org.jlexis.vocabulary.terms.Term
 
+/**
+ * Class to define a key which uniquely identifies a piece of user input data in a [UserInput].
+ */
 inline class RegisteredDataKey(val key: String) {
+    /**
+     * Validates the key.
+     * @throws IllegalArgumentException In case the key is blank
+     * @return The key itself if successfully validated
+     */
     fun validated(): RegisteredDataKey = if (key.isBlank()) throw IllegalArgumentException("data key must not be blank") else this
 }
 
@@ -11,6 +19,9 @@ typealias RegisteredWordStemTermKey = RegisteredDataKey
 typealias RegisteredInflectedTermKey = RegisteredDataKey
 typealias RegisteredTermKey = RegisteredDataKey
 
+/**
+ * Implementation of the [UserInput] interface.
+ */
 open class UserInputImpl : UserInput {
 
     private val terms by lazy { HashMap<RegisteredTermKey, Term>(8) }
@@ -23,6 +34,10 @@ open class UserInputImpl : UserInput {
     private val configurationKeys by lazy { HashSet<RegisteredDataKey>(3) }
     private val configuration by lazy { HashMap<RegisteredDataKey, String>(3) }
 
+    /**
+     * Extension function for `HashMap<RegisteredTermKey, Term>` which returns an [EmptyTerm] by default in case no [Term] could
+     * be found for any given key.
+     */
     private fun HashMap<RegisteredTermKey, Term>.getOrDefaultToEmpty(key: RegisteredTermKey): Term {
         return this.getOrDefault(key, EmptyTerm)
     }

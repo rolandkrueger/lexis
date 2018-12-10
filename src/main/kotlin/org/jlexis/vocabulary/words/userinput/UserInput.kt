@@ -2,6 +2,9 @@ package org.jlexis.vocabulary.words.userinput
 
 import org.jlexis.vocabulary.terms.Term
 
+/**
+ * Interface for defining the vocabulary input for one particular language.
+ */
 interface UserInput {
     fun setTerm(key: RegisteredTermKey, input: Term)
     fun getTerm(key: RegisteredTermKey): Term

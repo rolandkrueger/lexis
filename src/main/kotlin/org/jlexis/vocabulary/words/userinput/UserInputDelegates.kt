@@ -3,6 +3,10 @@ package org.jlexis.vocabulary.words.userinput
 import org.jlexis.vocabulary.terms.Term
 import kotlin.reflect.KProperty
 
+/**
+ * Property delegate class for term properties. This delegate class is used by the individual [Term] properties of a
+ * [UserInput] to map the term data on the [UserInput.setTerm] and [UserInput.getTerm] methods respectively.
+ */
 class UserInputTermPropertyDelegate(private val forKey: RegisteredTermKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
         return thisRef.getTerm(forKey)
@@ -13,6 +17,9 @@ class UserInputTermPropertyDelegate(private val forKey: RegisteredTermKey) {
     }
 }
 
+/**
+ * Property delegate class for delegated term properties.
+ */
 class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey, private val delegate: Term) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
         return delegate
@@ -23,6 +30,9 @@ class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey, priva
     }
 }
 
+/**
+ * Property delegate class for flag properties.
+ */
 class FlagPropertyDelegate(private val forKey: RegisteredDataKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Boolean? {
         return thisRef.getFlag(forKey)
@@ -33,6 +43,9 @@ class FlagPropertyDelegate(private val forKey: RegisteredDataKey) {
     }
 }
 
+/**
+ * Property delegate class for textual configuration properties.
+ */
 class ConfigurationPropertyDelegate(private val forKey: RegisteredDataKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): String? {
         return thisRef.getConfiguration(forKey)
@@ -43,6 +56,9 @@ class ConfigurationPropertyDelegate(private val forKey: RegisteredDataKey) {
     }
 }
 
+/**
+ * Property delegate class for enum configuration properties.
+ */
 class EnumConfigurationPropertyDelegate<T : Enum<T>>(val forKey: RegisteredDataKey, val convertToEnum: (String) -> T, val defaultValue: () -> T? = { null }) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): T? {
         return convertToEnum(thisRef.getConfiguration(forKey) ?: return defaultValue())

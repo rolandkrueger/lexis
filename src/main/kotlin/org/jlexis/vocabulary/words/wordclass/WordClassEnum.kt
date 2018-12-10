@@ -1,8 +1,18 @@
 package org.jlexis.vocabulary.words.wordclass
 
+import org.jlexis.vocabulary.words.VocabularyWord
+
+/**
+ * Enum to define the word class of a single [VocabularyWord]. A word class (or part of speech) is a category of words
+ * which have similar grammatical properties.
+ *
+ * See [Wikipedia](https://en.wikipedia.org/wiki/Part_of_speech).
+ *
+ * @property translationKey The key used to find a translation for the word class.
+ */
 enum class WordClassEnum(val translationKey: String) {
     /**
-     * Default value; to be used of no other word class is applicable.
+     * Default value: to be used if no other word class is applicable.
      */
     DEFAULT("word.class.default"),
     ADJECTIVE("word.class.adjective"),
