@@ -43,5 +43,12 @@ class ConfigurationPropertyDelegate(val forKey: RegisteredDataKey) {
     }
 }
 
+class EnumConfigurationPropertyDelegate<T : Enum<T>>(val forKey: RegisteredDataKey, val convertToEnum: (String) -> T, val defaultValue: () -> T? = { null }) {
+    operator fun getValue(thisRef: UserInput, property: KProperty<*>): T? {
+        return convertToEnum(thisRef.getConfiguration(forKey) ?: return defaultValue())
+    }
 
-
+    operator fun setValue(thisRef: UserInput, property: KProperty<*>, value: T?) {
+        thisRef.setConfiguration(forKey, value.toString())
+    }
+}
