@@ -3,7 +3,7 @@ package org.jlexis.vocabulary.words.userinput
 import org.jlexis.vocabulary.terms.Term
 import kotlin.reflect.KProperty
 
-class UserInputTermPropertyDelegate(val forKey: RegisteredTermKey) {
+class UserInputTermPropertyDelegate(private val forKey: RegisteredTermKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
         return thisRef.getTerm(forKey)
     }
@@ -13,17 +13,17 @@ class UserInputTermPropertyDelegate(val forKey: RegisteredTermKey) {
     }
 }
 
-class DelegatedTermPropertyDelegate(val key: RegisteredTermKey, val delegate: Term) {
+class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey, private val delegate: Term) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
         return delegate
     }
 
     operator fun setValue(thisRef: UserInput, property: KProperty<*>, value: Term) {
-        thisRef.setTerm(key, value)
+        thisRef.setTerm(forKey, value)
     }
 }
 
-class FlagPropertyDelegate(val forKey: RegisteredDataKey) {
+class FlagPropertyDelegate(private val forKey: RegisteredDataKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Boolean? {
         return thisRef.getFlag(forKey)
     }
@@ -33,7 +33,7 @@ class FlagPropertyDelegate(val forKey: RegisteredDataKey) {
     }
 }
 
-class ConfigurationPropertyDelegate(val forKey: RegisteredDataKey) {
+class ConfigurationPropertyDelegate(private val forKey: RegisteredDataKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): String? {
         return thisRef.getConfiguration(forKey)
     }
