@@ -37,6 +37,7 @@ open class UserInputImpl : UserInput {
     /**
      * Extension function for `HashMap<RegisteredTermKey, Term>` which returns an [EmptyTerm] by default in case no [Term] could
      * be found for any given key.
+     * @receiver Hash map containing the [Term]s of this user input.
      */
     private fun HashMap<RegisteredTermKey, Term>.getOrDefaultToEmpty(key: RegisteredTermKey): Term {
         return this.getOrDefault(key, EmptyTerm)
