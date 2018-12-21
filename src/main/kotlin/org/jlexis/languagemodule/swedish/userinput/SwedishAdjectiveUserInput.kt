@@ -17,7 +17,7 @@ class SwedishAdjectiveUserInput :
     var neutrum: Term by UserInputTermPropertyDelegate(neutrumKey)
     var plural: Term by UserInputTermPropertyDelegate(pluralKey)
 
-    var description  by DelegatedTermPropertyDelegate(delegatedUserInput.descriptionKey, delegatedUserInput.description)
+    var description by DelegatedTermPropertyDelegate(delegatedUserInput.descriptionKey, delegatedUserInput.description)
     var example by DelegatedTermPropertyDelegate(delegatedUserInput.exampleKey, delegatedUserInput.example)
     var phonetics by DelegatedTermPropertyDelegate(delegatedUserInput.phoneticsKey, delegatedUserInput.phonetics)
 

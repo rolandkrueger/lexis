@@ -1,5 +1,6 @@
 package org.jlexis.languagemodule.swedish.userinput
 
+import org.jlexis.vocabulary.terms.Term
 import org.jlexis.vocabulary.words.userinput.*
 import org.jlexis.vocabulary.words.userinput.standard.StandardUserInputDecorator
 
@@ -22,6 +23,11 @@ class SwedishNounUserInput : StandardUserInputDecorator<UserInputImpl>(UserInput
 
     val genderKey = RegisteredDataKey("swedish.noun.gender")
     val groupKey = RegisteredDataKey("swedish.noun.group")
+
+    var definiteSingular: Term by UserInputTermPropertyDelegate(definiteSingularKey)
+    var indefiniteSingular: Term by UserInputTermPropertyDelegate(indefiniteSingularKey)
+    var definitePlural: Term by UserInputTermPropertyDelegate(definitePluralKey)
+    var indefinitePlural: Term by UserInputTermPropertyDelegate(indefinitePluralKey)
 
     var isIrregular by FlagPropertyDelegate(isIrregularKey)
 
