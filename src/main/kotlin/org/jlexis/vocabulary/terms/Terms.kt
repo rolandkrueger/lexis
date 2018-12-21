@@ -103,6 +103,11 @@ open class Term protected constructor(input: TermInput) {
      */
     open fun isEmpty(): Boolean = getCanonicalRepresentation().isEmpty()
 
+    fun defaultIfEmpty(defaultValue: String = "-"): String = when {
+        isEmpty() -> defaultValue
+        else -> getDisplayString()
+    }
+
     /**
      * Extracts a word stem from this term. This word stem can be used by an inflected [Term] to form a new term. The
      * word stem is extracted as follows. If no special character is used for the word stem term data, the complete user
