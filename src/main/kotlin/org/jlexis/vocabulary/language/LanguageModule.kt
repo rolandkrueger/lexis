@@ -27,7 +27,7 @@ abstract class LanguageModule(val targetLanguage: Language,
                               var iconId: String = "",
                               val isDefault: Boolean = false) {
 
-    private val wordClasses: MutableMap<WordClassEnum, AbstractWordClass> = HashMap()
+    private val wordClasses: MutableMap<WordClassEnum, AbstractWordClass<*>> = HashMap()
 
     /**
      * Adds a word class implementation to the set of available word classes for this module. Language module
@@ -39,7 +39,7 @@ abstract class LanguageModule(val targetLanguage: Language,
      *
      * @param[wordClass] The word class implementation to be added to this module.
      */
-    protected fun registerWordClass(wordClass: AbstractWordClass) {
+    protected fun registerWordClass(wordClass: AbstractWordClass<*>) {
         wordClasses[wordClass.wordClassEnum] = wordClass
     }
 

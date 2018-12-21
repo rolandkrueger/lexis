@@ -7,9 +7,9 @@ import org.jlexis.vocabulary.terms.Term
  */
 class DefaultUserInput() : UserInputImpl() {
     companion object {
+
         val DEFAULT_TERM_KEY = RegisteredTermKey("default.term")
     }
-
     /**
      * The single [Term] element for this default user input. This term has no predefined meaning and can be used for
      * arbitrary input.

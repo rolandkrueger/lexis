@@ -5,9 +5,9 @@ import org.jlexis.vocabulary.words.userinput.UserInput
 import org.jlexis.vocabulary.words.wordclass.AbstractWordClass
 
 class VocabularyWord {
-    private val translations = HashMap<Language, Pair<AbstractWordClass, UserInput>>(2)
+    private val translations = HashMap<Language, Pair<AbstractWordClass<*>, UserInput>>(2)
 
-    fun addTranslation(forLanguage: Language, wordClass: AbstractWordClass) {
+    fun addTranslation(forLanguage: Language, wordClass: AbstractWordClass<*>) {
         translations[forLanguage] = Pair(wordClass, wordClass.createUserInputObject())
     }
 

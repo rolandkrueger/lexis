@@ -131,7 +131,6 @@ open class UserInputImpl : UserInput {
 
     override fun registerConfigurationKey(key: RegisteredDataKey) {
         configurationKeys.add(key)
-
     }
 
     private fun validateConfigurationKey(key: RegisteredDataKey) {
