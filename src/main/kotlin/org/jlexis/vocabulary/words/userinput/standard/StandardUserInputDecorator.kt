@@ -1,9 +1,9 @@
 package org.jlexis.vocabulary.words.userinput.standard
 
 import org.jlexis.vocabulary.terms.Term
+import org.jlexis.vocabulary.words.formatter.StandardUserInputFormatter
 import org.jlexis.vocabulary.words.userinput.RegisteredTermKey
 import org.jlexis.vocabulary.words.userinput.UserInput
-import org.jlexis.vocabulary.words.userinput.UserInputImpl
 import org.jlexis.vocabulary.words.userinput.UserInputTermPropertyDelegate
 
 open class StandardUserInputDecorator<T : UserInput>(val delegatedUserInput: T, keyPrefix: String) : UserInput by delegatedUserInput {
@@ -19,5 +19,9 @@ open class StandardUserInputDecorator<T : UserInput>(val delegatedUserInput: T, 
         listOf(descriptionKey, exampleKey, phoneticsKey).forEach {
             registerTermKey(it)
         }
+    }
+
+    fun getStandardUserInputFormatter(): StandardUserInputFormatter {
+        return StandardUserInputFormatter()
     }
 }

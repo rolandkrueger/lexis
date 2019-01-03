@@ -30,4 +30,6 @@ class SwedishAdjectiveUserInput :
 
     fun getResolvedNeutrum() = getResolvedInflectedTerm(neutrumKey)
     fun getResolvedPlural() = getResolvedInflectedTerm(pluralKey)
+
+    fun getStandardUserInputFormatter() = delegatedUserInput.getStandardUserInputFormatter()
 }
