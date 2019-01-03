@@ -20,9 +20,9 @@ class UserInputTermPropertyDelegate(private val forKey: RegisteredTermKey) {
 /**
  * Property delegate class for delegated term properties.
  */
-class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey, private val delegate: Term) {
+class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
-        return delegate
+        return thisRef.getTerm(forKey)
     }
 
     operator fun setValue(thisRef: UserInput, property: KProperty<*>, value: Term) {

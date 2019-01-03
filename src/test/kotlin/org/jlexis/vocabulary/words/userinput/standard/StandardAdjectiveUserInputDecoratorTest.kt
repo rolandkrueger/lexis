@@ -38,5 +38,5 @@ internal class StandardAdjectiveUserInputDecoratorTest {
 private class TestAdjectiveUserInput :
         StandardAdjectiveUserInputDecorator<StandardUserInputDecorator<UserInputImpl>>(StandardUserInputDecorator(UserInputImpl(), "test"), "test") {
 
-    var example by DelegatedTermPropertyDelegate(delegatedUserInput.exampleKey, delegatedUserInput.example)
+    var example by DelegatedTermPropertyDelegate(delegatedUserInput.exampleKey)
 }
