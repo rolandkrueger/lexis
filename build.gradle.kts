@@ -1,9 +1,10 @@
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
-    kotlin("jvm") version "1.3.11"
-    id("org.jetbrains.dokka") version "0.9.17"
+    kotlin("jvm") version "1.4.10"
+    id("org.jetbrains.dokka") version "1.4.0"
+    id("org.asciidoctor.jvm.convert") version "3.1.0"
 }
 
 group = "org.jlexis"
@@ -15,20 +16,21 @@ repositories {
 }
 
 dependencies {
-    compile(kotlin("stdlib-jdk8"))
-    testCompile("io.strikt", "strikt-core", "0.17.0")
-    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.3.1")
-    testCompile("org.junit.jupiter", "junit-jupiter-params", "5.3.1")
-    testCompile("org.junit.jupiter", "junit-jupiter-engine", "5.3.1")
+    implementation(kotlin("stdlib-jdk8"))
+    testImplementation("io.strikt", "strikt-core", "0.28.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.0")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.7.0")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.7.0")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-tasks {
-    val dokka by getting(DokkaTask::class) {
-        outputDirectory = "$buildDir/docs/dokka"
-        jdkVersion = 8
+tasks.named<AsciidoctorTask>("asciidoctor") {
+    outputOptions {
+        backends("html5")
     }
 }
+
+tasks.test { useJUnitPlatform() }
