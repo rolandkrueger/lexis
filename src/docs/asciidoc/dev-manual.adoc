@@ -1,0 +1,18 @@
+:toc:
+
+= Lexis - Developer Documentation
+
+This developer documentation describes the technical concepts behind the Lexis Vocabulary Trainer's source code and details the different aspects of the software design. The document's intended audience are developers who want to contribute to the source code of Lexis.
+
+== Introduction
+
+What is Lexis? Lexis is an Open Source vocabulary trainer, that lets you learn the vocabulary of a foreign language. It is similar to the well-known concept of a flashcard software. It is, however, much more specific in that it lets you explicitly learn the specifics and characteristics of one particular foreign language. While the core of the application is generic and language independent, the distinctive features of a foreign language will be added through a plugin.
+
+Lexis does not restrict you with the choice of foreign languages you can learn with it. It offers you the opportunity to learn language features such as plural forms of nouns or the declension of verbs, nouns and adjectives.
+
+This developer documentation describes the general architecture and the data model of Lexis.
+
+== Concept Overview
+
+
+
