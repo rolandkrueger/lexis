@@ -58,4 +58,8 @@ class MarkdownFormatterImplementor : FormatterImplementor {
         buffer.append("---")
         newLine()
     }
+
+    override fun comma() {
+        buffer.append(", ")
+    }
 }
