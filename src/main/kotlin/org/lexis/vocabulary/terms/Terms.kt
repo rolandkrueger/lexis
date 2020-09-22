@@ -73,7 +73,7 @@ open class Term protected constructor(input: TermInput) {
 
     companion object {
         fun fromUserInput(input: String) = Term(TermInput.TermUserInput(input))
-        fun fromCanonicalInput(canonicalInput: String) = Term(TermInput.TermCanonicalInput(canonicalInput))
+        fun fromCanonicalInput(canonicalInput: String) = Term(TermCanonicalInput(canonicalInput))
     }
 
     /**

@@ -1,0 +1,2 @@
+:Term: org.lexis.vocabulary.terms.Term
+:EmptyTerm: org.lexis.vocabulary.terms.EmptyTerm

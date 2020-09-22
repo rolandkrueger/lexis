@@ -1,4 +1,9 @@
 :toc:
+:source-highlighter: highlightjs
+
+:demoCode: {docdir}/../../../src/test/kotlin/doc_includes/
+
+include::_classNames.adoc[]
 
 = Lexis - Developer Documentation
 
@@ -14,5 +19,109 @@ This developer documentation describes the general architecture and the data mod
 
 == Concept Overview
 
+_tbd._
 
+== The Data Model
 
+At the heart of the Lexis data model lies the vocabulary data -- terms to be learned from a foreign language translated into one's own native language. The main goal of the Lexis vocabulary trainer is to remain language independent while at the same time being as language-specific as possible. Of course, this is somehow contradictory. How can this be achieved anyway?
+
+Language-specific features will be added to Lexis by way of language plugins. These plugins build on the generic features of the Lexis core application. Therefore, the Lexis data model must be as generic and flexible as possible so that a language plugin can easily add its own language-specific capabilities on top of this core data model. This section will explain this core data model in detail.
+
+=== General Overview [[data-model_general-overview]]
+
+Let's take a look at an example of one piece of vocabulary data which a language learner would like to learn. Imagine a learner whose native language is German and who wants to learn English and Swedish as a foreign language. Note that it is possible with Lexis to learn more than one language at the same time.
+
+The word to be learned is _to earn_ in English, which is _verdienen_ in German. The complete piece of vocabulary data for this word is the following:
+
+[width="100%",options="header"]
+|=======
+|German |English |Swedish
+|verdienen
+
+*Example*: seinen Lebensunterhalt verdienen, er verdient 6000 Kronen im Monat |
+(to) earn, ~ed, ~ed [ɜːn]
+
+*Example*: he ~ed a lot of money
+
+*Comment*: (of a person) obtain (income) in the form of money in return for labor or services|
+förtjäna, ~r, ~de [fœ(r)'çɛːna]
+
+*Example*: förtjäna sitt levebröd, han förtjänar sex tusen kronor i månaden
+
+*Comment*: förvärva som lön eller vinst
+|=======
+
+You can see a lot going on here. First of all, it can be stated that it is not enough to just have one word in your native language and the corresponding translation if you want to properly learn a foreign language. Very simple vocabulary trainers would let you learn exactly like that: they offer you a text input field for a word in your mother tongue and one text input field for its translation -- that's it. However, this is less than optimal for learning a foreign language.
+
+In fact, you need more data: for each word, it would be helpful to have one or more example sentences that show the correct usage of the word in the right context. Some words need a bit more explaining, so a comment would be useful. This comment could be the word's description from a monolingual dictionary. Furthermore, it is important to have the phonetic spelling available with https://en.wikipedia.org/wiki/International_Phonetic_Alphabet[IPA symbols], and if appropriate the inflected versions (such as comparative and superlative, or inflections for the different tenses) of the word should be available, too.
+
+All of this information must be handled by the data model, i.e. it must be flexible enough to cater to all these different types of information.
+
+The following sections will explain the data model in more detail.
+
+=== Terms
+
+The smallest entity for one piece of vocabulary data is a _Term_. Terms are the atoms of a vocabulary molecule. A Term consists of a single String which is entered by the user through the user interface. A term can, however, do more than just store a single piece of textual data.
+
+There are three types of terms:
+
+- Regular terms
+- Word stem terms
+- Inflected terms
+
+A *regular term* is just a container for a single user provided text input. This could be, for instance, the German word _verdienen_ from the example in chapter <<data-model_general-overview>>.
+
+In addition, a term allows the usage of certain control characters which allow the user to give particular parts of the term input a special meaning. With these, word stem terms and inflected terms can be defined.
+
+A *word stem term* specifies one part of the input as the https://en.wikipedia.org/wiki/Word_stem[word stem] of a piece of vocabulary. A word stem is the part of a word that doesn't change when the word is inflected.
+
+For example, in the Swedish language the definite singular and plural forms of a noun are built by appending a specific suffix to the noun's word stem, e.g. _clock_ in Swedish is _klocka_, _the clock_ is _klockan_, and _the clocks_ is _klockorna_. Here, you can easily see that the word stem for _klocka_ is _klock-_.
+
+In order to mark the word stem, a word stem term can be defined as "_klock|a_". The pipe symbol separates the word stem from the rest of the indefinite form of the noun. If the word stem is some sub-string of the term input, it can be indicated with the characters `<` and `>`. For example, "_(to) <under>go_" specifies the sub-string _under_ as the word stem.
+
+An inflected term is based on a word stem term in that it can inflect the word stem in a way that is grammatically appropriate. A placeholder specifies that part of the inflected term which can be replaced by the word stem. For example, to define the term for the simple past of _undergo_, you can specify it like so: _--went_. The past participle is specified as _--gone_. Together with the word stem, you get _underwent_ and _undergone_.
+
+Terms are represented by class `{Term}`. It has only one subclass `{EmptyTerm}`, which is a regular term with an empty input.
+
+A term becomes a word stem term, if the input string contains one of the word stem markers (`|` or `<` and `>`). The word stem can then be queried from the term as in the following example.
+
+.Resolve the word stem
+----
+include::{demoCode}/_TermDemo.kt[lines=14..15]
+----
+
+Method `getWordStem()` extracts the word stem from a term and returns it as a String. What happens when no control characters are used in the word stem term? In that case, `getWordStem()` returns the full contents of the term.
+
+.A word stem term without control characters
+----
+include::{demoCode}/_TermDemo.kt[lines=27..28]
+----
+
+To resolve an inflected term, you need two terms: a word stem term and an inflected term. In the following example, a word stem term is created with content "_klock|a_". This defines the word stem to be "_klock_". Then an inflected term is created which contains the placeholder "--" and the definite plural suffix for _klocka_. The placeholder will be replaced with the word stem when the inflected term is resolved. Resolving an inflected term will return a new term `resolvedInflectedTerm` which does not contain any word stem markers or placeholders but instead the fully resolved inflected term _klockorna_.
+
+.Resolve an inflected term
+----
+include::{demoCode}/_TermDemo.kt[lines=19..23]
+----
+
+Another example shows how to resolve inflected terms using a word stem term without any control characters.
+
+.Resolving an adjective and its comparative forms
+----
+include::{demoCode}/_TermDemo.kt[lines=27..38]
+----
+
+==== Term Input and Its Internal Representation
+
+Terms are immutable. Their content must be specified when they are constructed. As we saw in the previous examples, a term can be created from some user input using a factory method:
+
+.Create a term from some user input
+----
+include::{demoCode}/_TermDemo.kt[lines=14]
+----
+
+As the name implies, the user input is entered by the user through a UI. It may contain special characters, such as the pipe symbol or the double dash.
+
+This data is however not stored in the database in this form. It is stored internally in a canonical form. The canonical form is derived from the user input by replacing all control characters with an encoded version of that character. For example, the pipe symbol will be replaced with the string `#{|}`. With all special characters replaced this way, a term can be stored in the database.
+
+By using a canonical representation of the term data, it is possible to later change the special characters, e.g. by letting the user configure her own preferred control characters.

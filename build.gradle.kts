@@ -28,6 +28,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.named<AsciidoctorTask>("asciidoctor") {
+    setBaseDir("src/docs/asciidoc")
     outputOptions {
         backends("html5")
     }
