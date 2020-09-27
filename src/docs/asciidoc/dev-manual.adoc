@@ -1,7 +1,10 @@
 :toc:
+:sectanchors:
+:toclevels: 3
 :source-highlighter: highlightjs
 
 :demoCode: {docdir}/../../../src/test/kotlin/doc_includes/
+:sourceDir: {docdir}/../../../src/main/kotlin/
 
 include::_classNames.adoc[]
 
@@ -41,7 +44,7 @@ The word to be learned is _to earn_ in English, which is _verdienen_ in German. 
 *Example*: seinen Lebensunterhalt verdienen, er verdient 6000 Kronen im Monat |
 (to) earn, ~ed, ~ed [ɜːn]
 
-*Example*: he ~ed a lot of money
+*Example*: he earned a lot of money
 
 *Comment*: (of a person) obtain (income) in the form of money in return for labor or services|
 förtjäna, ~r, ~de [fœ(r)'çɛːna]
@@ -83,9 +86,10 @@ An inflected term is based on a word stem term in that it can inflect the word s
 
 Terms are represented by class `{Term}`. It has only one subclass `{EmptyTerm}`, which is a regular term with an empty input.
 
-A term becomes a word stem term, if the input string contains one of the word stem markers (`|` or `<` and `>`). The word stem can then be queried from the term as in the following example.
+A term becomes a word stem term, if the input String contains one of the word stem markers (`|` or `<` and `>`). The word stem can then be queried from the term as in the following example.
 
 .Resolve the word stem
+[source,java]
 ----
 include::{demoCode}/_TermDemo.kt[lines=14..15]
 ----
@@ -93,6 +97,7 @@ include::{demoCode}/_TermDemo.kt[lines=14..15]
 Method `getWordStem()` extracts the word stem from a term and returns it as a String. What happens when no control characters are used in the word stem term? In that case, `getWordStem()` returns the full contents of the term.
 
 .A word stem term without control characters
+[source,java]
 ----
 include::{demoCode}/_TermDemo.kt[lines=27..28]
 ----
@@ -100,6 +105,7 @@ include::{demoCode}/_TermDemo.kt[lines=27..28]
 To resolve an inflected term, you need two terms: a word stem term and an inflected term. In the following example, a word stem term is created with content "_klock|a_". This defines the word stem to be "_klock_". Then an inflected term is created which contains the placeholder "--" and the definite plural suffix for _klocka_. The placeholder will be replaced with the word stem when the inflected term is resolved. Resolving an inflected term will return a new term `resolvedInflectedTerm` which does not contain any word stem markers or placeholders but instead the fully resolved inflected term _klockorna_.
 
 .Resolve an inflected term
+[source,java]
 ----
 include::{demoCode}/_TermDemo.kt[lines=19..23]
 ----
@@ -107,6 +113,7 @@ include::{demoCode}/_TermDemo.kt[lines=19..23]
 Another example shows how to resolve inflected terms using a word stem term without any control characters.
 
 .Resolving an adjective and its comparative forms
+[source,java]
 ----
 include::{demoCode}/_TermDemo.kt[lines=27..38]
 ----
@@ -116,12 +123,99 @@ include::{demoCode}/_TermDemo.kt[lines=27..38]
 Terms are immutable. Their content must be specified when they are constructed. As we saw in the previous examples, a term can be created from some user input using a factory method:
 
 .Create a term from some user input
+[source,java]
 ----
 include::{demoCode}/_TermDemo.kt[lines=14]
 ----
 
 As the name implies, the user input is entered by the user through a UI. It may contain special characters, such as the pipe symbol or the double dash.
 
-This data is however not stored in the database in this form. It is stored internally in a canonical form. The canonical form is derived from the user input by replacing all control characters with an encoded version of that character. For example, the pipe symbol will be replaced with the string `#{|}`. With all special characters replaced this way, a term can be stored in the database.
+This data, however, is not stored in the database in this form. It is stored internally in a canonical form. The canonical form is derived from the user input by replacing all control characters with an encoded version of that character. For example, the pipe symbol will be replaced with the String `\#{|}`. The example above is represented by
+
+"_(to) \#{<}under#{>}go_"
+
+in its canonical form. With all special characters replaced this way, a term can be stored in the database.
 
 By using a canonical representation of the term data, it is possible to later change the special characters, e.g. by letting the user configure her own preferred control characters.
+
+When a term is read from the database, another factory method is used to create a term. This time using the canonical form.
+
+.Create a term from its canonical form
+[source,java]
+----
+include::{demoCode}/_TermDemo.kt[lines=42..43]
+----
+
+=== Combining Terms and Data Into a Piece of Vocabulary
+
+After we have seen how to use terms, the next step to build a full set of vocabulary data is to combine terms and additional data into one piece of vocabulary.
+
+What exactly does that mean? When you learn a foreign language, you typically need to learn the different forms (conjugations, comparative and superlative, etc.) of a word. For example, it is not enough to learn the meaning of the adjective _good_ in your native language. You also have to learn the word's comparative forms _better_ and _best_. This is done by combining all these forms, which belong to one particular word, into a single unit. As we will later see, this unit is represented by class `{VocabularyWord}`. This class combines all translations for a single word together with the different inflections of the word and additional data.
+
+To wrap up, if you want to learn an English adjective, you need to learn its positive, its comparative, and its superlative form. In addition to that, you will want to indicate with a flag whether the adjective is irregular and whether it consists of three or more syllables so that its comparative and superlative need to be formed with _more_ and _most_. Furthermore, you may want to add a comment and a usage example for the adjective.
+
+All this data can be combined into an object that implements the interface `{UserInput}`. A `{UserInput_short}` can hold the following data:
+
+* Terms which represent the vocabulary data. This includes regular terms, word stem term, and inflected terms.
+* Boolean flags which indicate specific properties of the word, e.g. whether it is irregular or not.
+* Arbitrary configuration data given as a String. How this configuration data is handled is defined by the language plugin which provides the given `{UserInput_short}`.
+
+The default implementation for interface `{UserInput_short}` is `{UserInputImpl}`. This class implements the storage mechanism for the input data and the corresponding access methods. All data for a `{UserInput_short}` is stored in individual hash maps. The keys for these maps are represented by objects of the inline class `{RegisteredDataKey}`, which is a wrapper for Strings.
+
+In order to add term data to a `{UserInput_short}`, you first have to register the `{RegisteredDataKey}` you want to use. This is done with method `{UserInput_short}#registerTermKey()`. After having registered a key, you can set the term data for this key with `{UserInput_short}#setTerm()`. When trying to use a key that was not registered first, an exception will be raised.
+
+The same concept applies for boolean flags and configuration data: you first register a key for each individual piece of data you want to store in a `{UserInput_short}` and then set the corresponding data with `setFlag()` and `setConfiguration()`, respectively.
+
+==== Connecting Word Stem Terms With Inflected Terms
+
+To be able to resolve inflected terms in a `{UserInput_short}`, you can establish a connection between a word stem term and an inflected term. Using this connection, a `{UserInput_short}` can then provide resolved inflected terms with the method `getResolvedInflectedTerm()`.
+
+This connection can be established with `connectInflectedTermWithWordStem()`. The method has two arguments: the first argument specifies the registered key of an inflected term, and the second argument specifies the registered key of the word stem term.
+
+To see this in action, you should have a look at the language specific implementations of the `{UserInput_short}` interface, such as `{SwedishAdjectiveUserInput}`.
+
+==== Constructing Concrete User Input Classes
+
+We have seen that `{UserInputImpl}` only implements the storage and access mechanisms for the data stored in a user input object.
+
+Constructing concrete input classes is done by sub-classing and through delegation. In the simplest form, a concrete user input class can be implemented by inheriting from `{UserInputImpl}` and by defining the supported data in this sub-class. This is done, for example, by the basic class `{DefaultUserInput}`. This class merely defines a single term input and nothing else.
+
+[source,java]
+.Source code of {DefaultUserInput}
+----
+include::{sourceDir}org/lexis/vocabulary/words/userinput/DefaultUserInput.kt[]
+----
+
+This class can be used when it suffices to store a single value for a given language, e.g. the translation of a vocabulary word in your own native language. In that case, you don't need more than one term, since you don't need to explicitly learn the grammatical rules of your own mother tongue.
+
+Let's go through this class and see how a regular term can be registered and used in a `{UserInput_short}`. `{DefaultUserInput}` inherits from `{UserInputImpl_short}`. By that, it can use `{UserInputImpl_short}` 's internal term and data storage facilities. Next, a companion object defines a registered key for the single term for the default user input. This key is registered as a term key in the `init` block.
+
+Only after having been registered, a term key can be used to define and access a term. The single regular term used by the `{DefaultUserInput_short}` is defined as a public property `term`. Here, it is important to note that access to the term is delegated to a `{TermPropertyDelegate}`. This is a concept used in all user input classes: every single piece of data, no matter if it is term data, boolean values, or configuration data, will be delegate to an adequate delegate class. We will look into this in more detail in the next section.
+
+This is a very simple example of how a class for managing user input can be constructed. To see some more complex examples, you can refer to the various user input classes for the different language modules.
+
+==== Delegating User Input Data
+
+Kotlin's property delegation concept allows delegating read and write access for a property to a delegate class. Lexis makes heavy use of this concept, especially in the user input classes. There are delegate classes available for every type of user input:
+
+- `{TermPropertyDelegate}`: delegates access to a term to the internal term map of `{UserInputImpl_short}`. To define the specific term for which such a delegate is responsible for, the corresponding registered term key must be passed to the delegate's constructor.
+- `{FlagPropertyDelegate}`: this class delegates access to some boolean flag value to the internal maps of `{UserInputImpl_short}`. A `{RegisteredDataKey_short}` has to be passed to the delegate's constructor to identify the delegated flag value.
+- `{ConfigurationPropertyDelegate}`: this class delegates access to some configuration String data to the internal maps of `{UserInputImpl_short}`. The data to be delegated is identified by a `{RegisteredDataKey_short}`.
+- `{EnumConfigurationPropertyDelegate}`: this class delegates access to an enum configuration property to the internal configuration storage maps of `{UserInputImpl_short}`. Here, too, a registered key must be provided. Since enum configuration properties are stored in the same map as the configuration properties, the registered keys for enum configuration and String data configuration properties must be distinct. An enum configuration property allows storing and retrieving a custom enum value in a user input object. Since the storage of these values is String-based, it must be defined how the transformation from and to a String for a custom enum class has to be done. Therefore, an `{EnumConfigurationPropertyDelegate}` has two additional constructor parameters: a lambda which specifies how a String is transformed into the custom enum type, and a default enum value to be used when no explicit value is given.
+
+Let's see these delegate classes in action. We define an example user input class which makes use of all these types of data.
+
+.Demonstrating a user input class making use of all property delegation types
+[source,java]
+----
+include::{demoCode}/_UserInputDemo.kt[lines=2..]
+----
+
+==== Combining Default User Input Data Using Decorators and Delegation
+
+When specifying the required input fields for different kinds of vocabulary words, you will quickly realize that there is a pattern of similar data that needs to be specified repeatedly. For example, you will almost always be able to provide an example usage, the phonetics, and a comment for a vocabulary word. For adjectives, you will want to be able to specify the positive form, the comparative, and the superlative. This is needed for every foreign language. So it would be very useful if these kinds of standard input configuration could be defined only once and then reused for every language module and any vocabulary word input which may profit from it.
+
+This is in fact possible through the use of decorator classes and class delegation. By using delegation instead of inheritance, default user input classes with standard fields can be combined freely. Let's examine two examples.
+
+
+

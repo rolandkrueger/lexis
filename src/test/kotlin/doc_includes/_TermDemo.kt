@@ -38,6 +38,11 @@ fun inflectedTermWithFullWordStemDemo() {
     val superlative = resolvedSuperlative.getUserInput() // => biggest
 }
 
+fun termFromCanonicalInput() {
+    val term = Term.fromCanonicalInput("(to) #{<}under#{>}go")
+    println(term.getDisplayString()) // => (to) <under>go
+}
+
 fun main() {
     inflectedTermWithFullWordStemDemo()
 }
