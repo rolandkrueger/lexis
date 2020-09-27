@@ -10,9 +10,9 @@ open class StandardAdjectiveUserInputDecorator<T : UserInput>(val delegatedUserI
     val isNotComparableKey = RegisteredDataKey("$keyPrefix.adjective.is_not_comparable")
     val isIrregularKey = RegisteredDataKey("$keyPrefix.adjective.is_irregular")
 
-    var positive: Term by UserInputTermPropertyDelegate(positiveKey)
-    var comparative: Term by UserInputTermPropertyDelegate(comparativeKey)
-    var superlative: Term by UserInputTermPropertyDelegate(superlativeKey)
+    var positive: Term by TermPropertyDelegate(positiveKey)
+    var comparative: Term by TermPropertyDelegate(comparativeKey)
+    var superlative: Term by TermPropertyDelegate(superlativeKey)
 
     var isNotComparable: Boolean? by FlagPropertyDelegate(isNotComparableKey)
     var isIrregular: Boolean? by FlagPropertyDelegate(isIrregularKey)

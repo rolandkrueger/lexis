@@ -1,9 +1,9 @@
 package org.lexis.vocabulary.words.userinput.standard
 
 import org.lexis.vocabulary.terms.Term
-import org.lexis.vocabulary.words.userinput.DelegatedTermPropertyDelegate
 import org.lexis.vocabulary.words.userinput.UserInputImpl
 import org.junit.jupiter.api.Test
+import org.lexis.vocabulary.words.userinput.TermPropertyDelegate
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
@@ -38,5 +38,5 @@ internal class StandardAdjectiveUserInputDecoratorTest {
 private class TestAdjectiveUserInput :
         StandardAdjectiveUserInputDecorator<StandardUserInputDecorator<UserInputImpl>>(StandardUserInputDecorator(UserInputImpl(), "test"), "test") {
 
-    var example by DelegatedTermPropertyDelegate(delegatedUserInput.exampleKey)
+    var example by TermPropertyDelegate(delegatedUserInput.exampleKey)
 }

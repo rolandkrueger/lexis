@@ -1,10 +1,9 @@
 package org.lexis.languagemodule.swedish.userinput
 
 import org.lexis.vocabulary.terms.Term
-import org.lexis.vocabulary.words.userinput.DelegatedTermPropertyDelegate
 import org.lexis.vocabulary.words.userinput.RegisteredTermKey
+import org.lexis.vocabulary.words.userinput.TermPropertyDelegate
 import org.lexis.vocabulary.words.userinput.UserInputImpl
-import org.lexis.vocabulary.words.userinput.UserInputTermPropertyDelegate
 import org.lexis.vocabulary.words.userinput.standard.StandardAdjectiveUserInputDecorator
 import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecorator
 
@@ -14,12 +13,12 @@ class SwedishAdjectiveUserInput :
     val neutrumKey = RegisteredTermKey("swedish.adjective.neutrum")
     val pluralKey = RegisteredTermKey("swedish.adjective.plural")
 
-    var neutrum: Term by UserInputTermPropertyDelegate(neutrumKey)
-    var plural: Term by UserInputTermPropertyDelegate(pluralKey)
+    var neutrum: Term by TermPropertyDelegate(neutrumKey)
+    var plural: Term by TermPropertyDelegate(pluralKey)
 
-    var description by DelegatedTermPropertyDelegate(delegatedUserInput.descriptionKey)
-    var example by DelegatedTermPropertyDelegate(delegatedUserInput.exampleKey)
-    var phonetics by DelegatedTermPropertyDelegate(delegatedUserInput.phoneticsKey)
+    var description by TermPropertyDelegate(delegatedUserInput.descriptionKey)
+    var example by TermPropertyDelegate(delegatedUserInput.exampleKey)
+    var phonetics by TermPropertyDelegate(delegatedUserInput.phoneticsKey)
 
     init {
         listOf(neutrumKey, pluralKey).forEach { registerTermKey(it) }

@@ -7,20 +7,7 @@ import kotlin.reflect.KProperty
  * Property delegate class for term properties. This delegate class is used by the individual [Term] properties of a
  * [UserInput] to map the term data on the [UserInput.setTerm] and [UserInput.getTerm] methods respectively.
  */
-class UserInputTermPropertyDelegate(private val forKey: RegisteredTermKey) {
-    operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
-        return thisRef.getTerm(forKey)
-    }
-
-    operator fun setValue(thisRef: UserInput, property: KProperty<*>, value: Term) {
-        thisRef.setTerm(forKey, value)
-    }
-}
-
-/**
- * Property delegate class for delegated term properties.
- */
-class DelegatedTermPropertyDelegate(private val forKey: RegisteredTermKey) {
+class TermPropertyDelegate(private val forKey: RegisteredTermKey) {
     operator fun getValue(thisRef: UserInput, property: KProperty<*>): Term {
         return thisRef.getTerm(forKey)
     }

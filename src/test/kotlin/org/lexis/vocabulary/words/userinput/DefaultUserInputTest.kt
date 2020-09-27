@@ -9,7 +9,7 @@ import strikt.assertions.isTrue
 
 internal class DefaultUserInputTest {
 
-    val input: DefaultUserInput = DefaultUserInput()
+    private val input: DefaultUserInput = DefaultUserInput()
 
     @Test
     fun `Add a term and read it again`() {

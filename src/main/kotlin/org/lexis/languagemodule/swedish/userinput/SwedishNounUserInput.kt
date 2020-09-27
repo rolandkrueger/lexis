@@ -24,10 +24,10 @@ class SwedishNounUserInput : StandardUserInputDecorator<UserInputImpl>(UserInput
     val genderKey = RegisteredDataKey("swedish.noun.gender")
     val groupKey = RegisteredDataKey("swedish.noun.group")
 
-    var definiteSingular: Term by UserInputTermPropertyDelegate(definiteSingularKey)
-    var indefiniteSingular: Term by UserInputTermPropertyDelegate(indefiniteSingularKey)
-    var definitePlural: Term by UserInputTermPropertyDelegate(definitePluralKey)
-    var indefinitePlural: Term by UserInputTermPropertyDelegate(indefinitePluralKey)
+    var definiteSingular: Term by TermPropertyDelegate(definiteSingularKey)
+    var indefiniteSingular: Term by TermPropertyDelegate(indefiniteSingularKey)
+    var definitePlural: Term by TermPropertyDelegate(definitePluralKey)
+    var indefinitePlural: Term by TermPropertyDelegate(indefinitePluralKey)
 
     var isIrregular by FlagPropertyDelegate(isIrregularKey)
 

@@ -20,7 +20,7 @@ import org.lexis.vocabulary.words.wordclass.AbstractWordClass
  *
  *  In order to simplify to define properties in sub-classes for these types, there are delegate classes available to
  *  handle the mapping on the respective getter and setter methods for these types of data. See classes
- *  [UserInputTermPropertyDelegate], [DelegatedTermPropertyDelegate], [FlagPropertyDelegate], [ConfigurationPropertyDelegate],
+ *  [TermPropertyDelegate], [DelegatedTermPropertyDelegate], [FlagPropertyDelegate], [ConfigurationPropertyDelegate],
  *  and [EnumConfigurationPropertyDelegate] for details.
  */
 interface UserInput {
