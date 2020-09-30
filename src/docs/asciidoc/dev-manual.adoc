@@ -154,43 +154,43 @@ What exactly does that mean? When you learn a foreign language, you typically ne
 
 To wrap up, if you want to learn an English adjective, you need to learn its positive, its comparative, and its superlative form. In addition to that, you will want to indicate with a flag whether the adjective is irregular and whether it consists of three or more syllables so that its comparative and superlative need to be formed with _more_ and _most_. Furthermore, you may want to add a comment and a usage example for the adjective.
 
-All this data can be combined into an object that implements the interface `{UserInput}`. A `{UserInput_short}` can hold the following data:
+All this data can be combined into an object that implements the interface `{UserInputData}`. A `{UserInputData_short}` can hold the following data:
 
 * Terms which represent the vocabulary data. This includes regular terms, word stem term, and inflected terms.
 * Boolean flags which indicate specific properties of the word, e.g. whether it is irregular or not.
-* Arbitrary configuration data given as a String. How this configuration data is handled is defined by the language plugin which provides the given `{UserInput_short}`.
+* Arbitrary configuration data given as a String. How this configuration data is handled is defined by the language plugin which provides the given `{UserInputData_short}`.
 
-The default implementation for interface `{UserInput_short}` is `{UserInputImpl}`. This class implements the storage mechanism for the input data and the corresponding access methods. All data for a `{UserInput_short}` is stored in individual hash maps. The keys for these maps are represented by objects of the inline class `{RegisteredDataKey}`, which is a wrapper for Strings.
+The default implementation for interface `{UserInputData_short}` is `{UserInputDataImpl}`. This class implements the storage mechanism for the input data and the corresponding access methods. All data for a `{UserInputData_short}` is stored in individual hash maps. The keys for these maps are represented by objects of the inline class `{RegisteredDataKey}`, which is a wrapper for Strings.
 
-In order to add term data to a `{UserInput_short}`, you first have to register the `{RegisteredDataKey}` you want to use. This is done with method `{UserInput_short}#registerTermKey()`. After having registered a key, you can set the term data for this key with `{UserInput_short}#setTerm()`. When trying to use a key that was not registered first, an exception will be raised.
+In order to add term data to a `{UserInputData_short}`, you first have to register the `{RegisteredDataKey}` you want to use. This is done with method `{UserInputData_short}#registerTermKey()`. After having registered a key, you can set the term data for this key with `{UserInputData_short}#setTerm()`. When trying to use a key that was not registered first, an exception will be raised.
 
-The same concept applies for boolean flags and configuration data: you first register a key for each individual piece of data you want to store in a `{UserInput_short}` and then set the corresponding data with `setFlag()` and `setConfiguration()`, respectively.
+The same concept applies for boolean flags and configuration data: you first register a key for each individual piece of data you want to store in a `{UserInputData_short}` and then set the corresponding data with `setFlag()` and `setConfiguration()`, respectively.
 
 ==== Connecting Word Stem Terms With Inflected Terms
 
-To be able to resolve inflected terms in a `{UserInput_short}`, you can establish a connection between a word stem term and an inflected term. Using this connection, a `{UserInput_short}` can then provide resolved inflected terms with the method `getResolvedInflectedTerm()`.
+To be able to resolve inflected terms in a `{UserInputData_short}`, you can establish a connection between a word stem term and an inflected term. Using this connection, a `{UserInputData_short}` can then provide resolved inflected terms with the method `getResolvedInflectedTerm()`.
 
 This connection can be established with `connectInflectedTermWithWordStem()`. The method has two arguments: the first argument specifies the registered key of an inflected term, and the second argument specifies the registered key of the word stem term.
 
-To see this in action, you should have a look at the language specific implementations of the `{UserInput_short}` interface, such as `{SwedishAdjectiveUserInput}`.
+To see this in action, you should have a look at the language specific implementations of the `{UserInputData_short}` interface, such as `{SwedishAdjectiveUserInput}`.
 
 ==== Constructing Concrete User Input Classes
 
-We have seen that `{UserInputImpl}` only implements the storage and access mechanisms for the data stored in a user input object.
+We have seen that `{UserInputDataImpl}` only implements the storage and access mechanisms for the data stored in a user input object.
 
-Constructing concrete input classes is done by sub-classing and through delegation. In the simplest form, a concrete user input class can be implemented by inheriting from `{UserInputImpl}` and by defining the supported data in this sub-class. This is done, for example, by the basic class `{DefaultUserInput}`. This class merely defines a single term input and nothing else.
+Constructing concrete input classes is done by sub-classing and through delegation. In the simplest form, a concrete user input class can be implemented by inheriting from `{UserInputDataImpl}` and by defining the supported data in this sub-class. This is done, for example, by the basic class `{DefaultUserInputImpl}`. This class merely defines a single term input and nothing else.
 
 [source,java]
-.Source code of {DefaultUserInput}
+.Source code of {DefaultUserInputImpl}
 ----
 include::{sourceDir}org/lexis/vocabulary/words/userinput/DefaultUserInput.kt[]
 ----
 
 This class can be used when it suffices to store a single value for a given language, e.g. the translation of a vocabulary word in your own native language. In that case, you don't need more than one term, since you don't need to explicitly learn the grammatical rules of your own mother tongue.
 
-Let's go through this class and see how a regular term can be registered and used in a `{UserInput_short}`. `{DefaultUserInput}` inherits from `{UserInputImpl_short}`. By that, it can use `{UserInputImpl_short}` 's internal term and data storage facilities. Next, a companion object defines a registered key for the single term for the default user input. This key is registered as a term key in the `init` block.
+Let's go through this class and see how a regular term can be registered and used in a `{UserInputData_short}`. `{DefaultUserInputImpl}` inherits from `{UserInputDataImpl_short}`. By that, it can use `{UserInputDataImpl_short}` 's internal term and data storage facilities. Next, a companion object defines a registered key for the single term for the default user input. This key is registered as a term key in the `init` block.
 
-Only after having been registered, a term key can be used to define and access a term. The single regular term used by the `{DefaultUserInput_short}` is defined as a public property `term`. Here, it is important to note that access to the term is delegated to a `{TermPropertyDelegate}`. This is a concept used in all user input classes: every single piece of data, no matter if it is term data, boolean values, or configuration data, will be delegate to an adequate delegate class. We will look into this in more detail in the next section.
+Only after having been registered, a term key can be used to define and access a term. The single regular term used by the `{DefaultUserInputImpl_short}` is defined as a public property `term`. Here, it is important to note that access to the term is delegated to a `{TermPropertyDelegate}`. This is a concept used in all user input classes: every single piece of data, no matter if it is term data, boolean values, or configuration data, will be delegate to an adequate delegate class. We will look into this in more detail in the next section.
 
 This is a very simple example of how a class for managing user input can be constructed. To see some more complex examples, you can refer to the various user input classes for the different language modules.
 
@@ -198,10 +198,10 @@ This is a very simple example of how a class for managing user input can be cons
 
 Kotlin's property delegation concept allows delegating read and write access for a property to a delegate class. Lexis makes heavy use of this concept, especially in the user input classes. There are delegate classes available for every type of user input:
 
-- `{TermPropertyDelegate}`: delegates access to a term to the internal term map of `{UserInputImpl_short}`. To define the specific term for which such a delegate is responsible for, the corresponding registered term key must be passed to the delegate's constructor.
-- `{FlagPropertyDelegate}`: this class delegates access to some boolean flag value to the internal maps of `{UserInputImpl_short}`. A `{RegisteredDataKey_short}` has to be passed to the delegate's constructor to identify the delegated flag value.
-- `{ConfigurationPropertyDelegate}`: this class delegates access to some configuration String data to the internal maps of `{UserInputImpl_short}`. The data to be delegated is identified by a `{RegisteredDataKey_short}`.
-- `{EnumConfigurationPropertyDelegate}`: this class delegates access to an enum configuration property to the internal configuration storage maps of `{UserInputImpl_short}`. Here, too, a registered key must be provided. Since enum configuration properties are stored in the same map as the configuration properties, the registered keys for enum configuration and String data configuration properties must be distinct. An enum configuration property allows storing and retrieving a custom enum value in a user input object. Since the storage of these values is String-based, it must be defined how the transformation from and to a String for a custom enum class has to be done. Therefore, an `{EnumConfigurationPropertyDelegate}` has two additional constructor parameters: a lambda which specifies how a String is transformed into the custom enum type, and a default enum value to be used when no explicit value is given.
+- `{TermPropertyDelegate}`: delegates access to a term to the internal term map of `{UserInputDataImpl_short}`. To define the specific term for which such a delegate is responsible for, the corresponding registered term key must be passed to the delegate's constructor.
+- `{FlagPropertyDelegate}`: this class delegates access to some boolean flag value to the internal maps of `{UserInputDataImpl_short}`. A `{RegisteredDataKey_short}` has to be passed to the delegate's constructor to identify the delegated flag value.
+- `{ConfigurationPropertyDelegate}`: this class delegates access to some configuration String data to the internal maps of `{UserInputDataImpl_short}`. The data to be delegated is identified by a `{RegisteredDataKey_short}`.
+- `{EnumConfigurationPropertyDelegate}`: this class delegates access to an enum configuration property to the internal configuration storage maps of `{UserInputDataImpl_short}`. Here, too, a registered key must be provided. Since enum configuration properties are stored in the same map as the configuration properties, the registered keys for enum configuration and String data configuration properties must be distinct. An enum configuration property allows storing and retrieving a custom enum value in a user input object. Since the storage of these values is String-based, it must be defined how the transformation from and to a String for a custom enum class has to be done. Therefore, an `{EnumConfigurationPropertyDelegate}` has two additional constructor parameters: a lambda which specifies how a String is transformed into the custom enum type, and a default enum value to be used when no explicit value is given.
 
 Let's see these delegate classes in action. We define an example user input class which makes use of all these types of data.
 
