@@ -178,7 +178,7 @@ To see this in action, you should have a look at the language specific implement
 
 We have seen that `{UserInputDataImpl}` only implements the storage and access mechanisms for the data stored in a user input object.
 
-Constructing concrete input classes is done by sub-classing and through delegation. In the simplest form, a concrete user input class can be implemented by inheriting from `{UserInputDataImpl}` and by defining the supported data in this sub-class. This is done, for example, by the basic class `{DefaultUserInputImpl}`. This class merely defines a single term input and nothing else.
+Constructing concrete input classes is done through delegation. In the simplest form, a concrete user input class can be implemented by writing a class which contains the required terms as properties. Access to these properties is then delegated to an instance of `{UserInputDataImpl}` which is passed in through the constructor. This is done, for example, by the basic class `{DefaultUserInputImpl}`. This class merely defines a single term input and nothing else.
 
 [source,java]
 .Source code of {DefaultUserInputImpl}
@@ -188,9 +188,9 @@ include::{sourceDir}org/lexis/vocabulary/words/userinput/DefaultUserInput.kt[]
 
 This class can be used when it suffices to store a single value for a given language, e.g. the translation of a vocabulary word in your own native language. In that case, you don't need more than one term, since you don't need to explicitly learn the grammatical rules of your own mother tongue.
 
-Let's go through this class and see how a regular term can be registered and used in a `{UserInputData_short}`. `{DefaultUserInputImpl}` inherits from `{UserInputDataImpl_short}`. By that, it can use `{UserInputDataImpl_short}` 's internal term and data storage facilities. Next, a companion object defines a registered key for the single term for the default user input. This key is registered as a term key in the `init` block.
+Let's go through this class and see how a regular term can be registered and used in a `{UserInputData_short}`. `{DefaultUserInputImpl}` receives a `{UserInputDataImpl_short}` object in its constructor. Using this object as a delegation target, it can use its internal term and data storage facilities. Next, a companion object defines a registered key for the single term of the default user input. This key is registered as a term key in the `init` block.
 
-Only after having been registered, a term key can be used to define and access a term. The single regular term used by the `{DefaultUserInputImpl_short}` is defined as a public property `term`. Here, it is important to note that access to the term is delegated to a `{TermPropertyDelegate}`. This is a concept used in all user input classes: every single piece of data, no matter if it is term data, boolean values, or configuration data, will be delegate to an adequate delegate class. We will look into this in more detail in the next section.
+Only after having been registered, a term key can be used to define and access a term. The single regular term used by the `{DefaultUserInputImpl_short}` is defined as a public property `term`. Here, it is important to note that access to the term is delegated to a `{TermPropertyDelegate}`. This is a concept used in all user input classes: every single piece of data, no matter if it is term data, boolean values, or configuration data, will be delegate to an adequate delegate class. This delegate class passes the delegated data on to the `{UserInputData_short}` object. We will look into this in more detail in the next section.
 
 This is a very simple example of how a class for managing user input can be constructed. To see some more complex examples, you can refer to the various user input classes for the different language modules.
 
@@ -211,11 +211,32 @@ Let's see these delegate classes in action. We define an example user input clas
 include::{demoCode}/_UserInputDemo.kt[lines=2..]
 ----
 
+As you can see, the `{UserInputData_short}` object, which will receive and store the delegated data, is passed to the delegate class's constructor.
+
 ==== Combining Default User Input Data Using Decorators and Delegation
 
-When specifying the required input fields for different kinds of vocabulary words, you will quickly realize that there is a pattern of similar data that needs to be specified repeatedly. For example, you will almost always be able to provide an example usage, the phonetics, and a comment for a vocabulary word. For adjectives, you will want to be able to specify the positive form, the comparative, and the superlative. This is needed for every foreign language. So it would be very useful if these kinds of standard input configuration could be defined only once and then reused for every language module and any vocabulary word input which may profit from it.
+When specifying the required input fields for different kinds of vocabulary words, you will quickly realize that there is a pattern of similar data that needs to be specified repeatedly. For example, you will almost always want to be able to provide an example usage, the phonetics, and a comment for a vocabulary word. For adjectives, you will want to be able to specify the positive form, the comparative, and the superlative. This is needed for every foreign language. So it would be very useful if these kinds of standard input configuration could be defined only once and then reused for every language module and any vocabulary word input which may profit from it.
 
-This is in fact possible through the use of decorator classes and class delegation. By using delegation instead of inheritance, default user input classes with standard fields can be combined freely. Let's examine two examples.
+This is in fact possible through the use of decorator classes and class delegation. By using delegation instead of inheritance, default user input classes with standard fields can be combined freely.
 
+Let's examine an example. We have seen the simple user input class `{DefaultUserInputImpl_short}` in the previous sections. What if we wanted to create a simple user input class with one term but with the additional option to add an example, a description, and the phonetics? In that case we could combine a decorator class providing these extra fields with the `{DefaultUserInputImpl_short}` class.
 
+A decorator class for these extra fields is `{StandardUserInputDecoratorImpl}`. This class provides exactly three terms: `description`, `example`, and `phonetics`. You can combine `{DefaultUserInputImpl_short}` and `{StandardUserInputDecoratorImpl_short}` as done by class `{DefaultUserInputWithStandardFields}`:
 
+[source,java]
+.Source code of {DefaultUserInputWithStandardFields}
+----
+include::{sourceDir}org/lexis/vocabulary/words/userinput/DefaultUserInputWithStandardFields.kt[]
+----
+
+The default user input is combined with the standard fields by implementing the same interface as `{DefaultUserInputImpl_short}` and `{StandardUserInputDecoratorImpl_short}` and by delegating access to these interfaces' methods to instances of these classes. As you can see, by virtue of the delegation none of the items of these interfaces need to be implemented.
+
+To wrap up, if you want to combine user input classes, you define an interface for all combinable user input classes which can be implemented through delegation by a combining user input class.
+
+Make sure at least one of the implemented interfaces or the combining user input class itself implements the `{HasValues}` interface so that the `isEmpty()` method is available there. The implementation for this interface also needs to be delgated to the `{UserInputData_short}` object provided in the constructor. Refer to `{DefaultUserInputImpl_short}` for an example of this.
+
+=== Word Classes
+
+=== Languages
+
+=== Vocabulary Words

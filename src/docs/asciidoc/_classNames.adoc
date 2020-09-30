@@ -14,3 +14,7 @@
 :FlagPropertyDelegate: org.lexis.vocabulary.words.userinput.FlagPropertyDelegate
 :ConfigurationPropertyDelegate: org.lexis.vocabulary.words.userinput.ConfigurationPropertyDelegate
 :EnumConfigurationPropertyDelegate: org.lexis.vocabulary.words.userinput.EnumConfigurationPropertyDelegate
+:StandardUserInputDecoratorImpl: org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecoratorImpl
+:StandardUserInputDecoratorImpl_short: StandardUserInputDecoratorImpl
+:DefaultUserInputWithStandardFields: org.lexis.vocabulary.words.userinput.DefaultUserInputWithStandardFields
+:HasValues: org.lexis.data.HasValues
