@@ -1,34 +1,36 @@
 package org.lexis.languagemodule.swedish.userinput
 
+import org.lexis.data.HasValues
 import org.lexis.vocabulary.terms.Term
 import org.lexis.vocabulary.words.userinput.RegisteredTermKey
 import org.lexis.vocabulary.words.userinput.TermPropertyDelegate
-import org.lexis.vocabulary.words.userinput.UserInputImpl
+import org.lexis.vocabulary.words.userinput.UserInputData
+import org.lexis.vocabulary.words.userinput.UserInputDataImpl
 import org.lexis.vocabulary.words.userinput.standard.StandardAdjectiveUserInputDecorator
+import org.lexis.vocabulary.words.userinput.standard.StandardAdjectiveUserInputDecoratorImpl
 import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecorator
+import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecoratorImpl
 
-class SwedishAdjectiveUserInput :
-        StandardAdjectiveUserInputDecorator<StandardUserInputDecorator<UserInputImpl>>(StandardUserInputDecorator(UserInputImpl(), "swedish"), "swedish") {
+class SwedishAdjectiveUserInput(private val userInputData: UserInputData = UserInputDataImpl()) :
+        StandardAdjectiveUserInputDecorator by StandardAdjectiveUserInputDecoratorImpl(userInputData, "swedish"),
+        StandardUserInputDecorator by StandardUserInputDecoratorImpl("swedish", userInputData),
+        HasValues by userInputData {
 
-    val neutrumKey = RegisteredTermKey("swedish.adjective.neutrum")
-    val pluralKey = RegisteredTermKey("swedish.adjective.plural")
+    private val neutrumKey = RegisteredTermKey("swedish.adjective.neutrum")
+    private val pluralKey = RegisteredTermKey("swedish.adjective.plural")
 
-    var neutrum: Term by TermPropertyDelegate(neutrumKey)
-    var plural: Term by TermPropertyDelegate(pluralKey)
-
-    var description by TermPropertyDelegate(delegatedUserInput.descriptionKey)
-    var example by TermPropertyDelegate(delegatedUserInput.exampleKey)
-    var phonetics by TermPropertyDelegate(delegatedUserInput.phoneticsKey)
+    var neutrum: Term by TermPropertyDelegate(userInputData, neutrumKey)
+    var plural: Term by TermPropertyDelegate(userInputData, pluralKey)
 
     init {
-        listOf(neutrumKey, pluralKey).forEach { registerTermKey(it) }
+        listOf(neutrumKey, pluralKey).forEach { userInputData.registerTermKey(it) }
 
-        connectInflectedTermWithWordStem(neutrumKey, positiveKey)
-        connectInflectedTermWithWordStem(pluralKey, positiveKey)
+        userInputData.connectInflectedTermWithWordStem(neutrumKey, positiveKey)
+        userInputData.connectInflectedTermWithWordStem(pluralKey, positiveKey)
     }
 
-    fun getResolvedNeutrum() = getResolvedInflectedTerm(neutrumKey)
-    fun getResolvedPlural() = getResolvedInflectedTerm(pluralKey)
+    fun getResolvedNeutrum() = userInputData.getResolvedInflectedTerm(neutrumKey)
+    fun getResolvedPlural() = userInputData.getResolvedInflectedTerm(pluralKey)
 
-    fun getStandardUserInputFormatter() = delegatedUserInput.getStandardUserInputFormatter()
+//    fun getStandardUserInputFormatter() = userInput.getStandardUserInputFormatter()
 }

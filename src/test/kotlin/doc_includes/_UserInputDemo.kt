@@ -3,7 +3,7 @@ package doc_includes
 import org.lexis.vocabulary.terms.Term
 import org.lexis.vocabulary.words.userinput.*
 
-class DemoUserInput : UserInputImpl() {
+class DemoUserInput(userInputData: UserInputData) {
 
     enum class Gender {
         MALE,
@@ -19,21 +19,21 @@ class DemoUserInput : UserInputImpl() {
     }
 
     init {
-        registerTermKey(termKey)
-        registerFlagKey(flagKey)
-        registerConfigurationKey(configKey)
-        registerConfigurationKey(genderKey)
+        userInputData.registerTermKey(termKey)
+        userInputData.registerFlagKey(flagKey)
+        userInputData.registerConfigurationKey(configKey)
+        userInputData.registerConfigurationKey(genderKey)
     }
 
-    var term by TermPropertyDelegate(termKey)
-    var isIrregularFlag by FlagPropertyDelegate(flagKey)
-    var configuration by ConfigurationPropertyDelegate(configKey)
-    var gender by EnumConfigurationPropertyDelegate(genderKey,
+    var term by TermPropertyDelegate(userInputData, termKey)
+    var isIrregularFlag by FlagPropertyDelegate(userInputData, flagKey)
+    var configuration by ConfigurationPropertyDelegate(userInputData, configKey)
+    var gender by EnumConfigurationPropertyDelegate(userInputData, genderKey,
             { Gender.valueOf(it) }, { Gender.NEUTRUM })
 }
 
 fun main() {
-    val demoInput = DemoUserInput()
+    val demoInput = DemoUserInput(UserInputDataImpl())
 
     demoInput.term = Term.fromUserInput("Status")
     demoInput.isIrregularFlag = true

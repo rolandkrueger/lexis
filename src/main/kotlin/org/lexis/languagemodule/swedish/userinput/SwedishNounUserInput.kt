@@ -1,10 +1,11 @@
 package org.lexis.languagemodule.swedish.userinput
 
-import org.lexis.vocabulary.terms.Term
+import org.lexis.data.HasValues
 import org.lexis.vocabulary.words.userinput.*
 import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecorator
+import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecoratorImpl
 
-class SwedishNounUserInput : StandardUserInputDecorator<UserInputImpl>(UserInputImpl(), "swedish") {
+class SwedishNounUserInput(private val userInputData: UserInputData = UserInputDataImpl()) : StandardUserInputDecorator by StandardUserInputDecoratorImpl("swedish", userInputData), HasValues by userInputData {
 
     enum class Gender {
         UTRUM, NEUTRUM, UNKNOWN;
@@ -14,41 +15,42 @@ class SwedishNounUserInput : StandardUserInputDecorator<UserInputImpl>(UserInput
         GROUP1, GROUP2, GROUP3, GROUP4, GROUP5, UNKNOWN
     }
 
-    val definiteSingularKey = RegisteredTermKey("swedish.noun.definiteSingular")
-    val indefiniteSingularKey = RegisteredTermKey("swedish.noun.indefiniteSingular")
-    val definitePluralKey = RegisteredTermKey("swedish.noun.definitePlural")
-    val indefinitePluralKey = RegisteredTermKey("swedish.noun.indefinitePlural")
+    private companion object {
+        private val definiteSingularKey = RegisteredTermKey("swedish.noun.definiteSingular")
+        private val indefiniteSingularKey = RegisteredTermKey("swedish.noun.indefiniteSingular")
+        private val definitePluralKey = RegisteredTermKey("swedish.noun.definitePlural")
+        private val indefinitePluralKey = RegisteredTermKey("swedish.noun.indefinitePlural")
 
-    val isIrregularKey = RegisteredDataKey("swedish.noun.isIrregular")
+        private val isIrregularKey = RegisteredDataKey("swedish.noun.isIrregular")
+        private val genderKey = RegisteredDataKey("swedish.noun.gender")
+        private val groupKey = RegisteredDataKey("swedish.noun.group")
+    }
 
-    val genderKey = RegisteredDataKey("swedish.noun.gender")
-    val groupKey = RegisteredDataKey("swedish.noun.group")
+    var definiteSingular by TermPropertyDelegate(userInputData, definiteSingularKey)
+    var indefiniteSingular by TermPropertyDelegate(userInputData, indefiniteSingularKey)
+    var definitePlural by TermPropertyDelegate(userInputData, definitePluralKey)
+    var indefinitePlural by TermPropertyDelegate(userInputData, indefinitePluralKey)
 
-    var definiteSingular: Term by TermPropertyDelegate(definiteSingularKey)
-    var indefiniteSingular: Term by TermPropertyDelegate(indefiniteSingularKey)
-    var definitePlural: Term by TermPropertyDelegate(definitePluralKey)
-    var indefinitePlural: Term by TermPropertyDelegate(indefinitePluralKey)
+    var isIrregular by FlagPropertyDelegate(userInputData, isIrregularKey)
 
-    var isIrregular by FlagPropertyDelegate(isIrregularKey)
-
-    var gender by EnumConfigurationPropertyDelegate(genderKey, { Gender.valueOf(it) }, {Gender.UNKNOWN})
-    var group by EnumConfigurationPropertyDelegate(groupKey, { Group.valueOf(it) }, { Group.UNKNOWN })
+    var gender by EnumConfigurationPropertyDelegate(userInputData, genderKey, { Gender.valueOf(it) }, { Gender.UNKNOWN })
+    var group by EnumConfigurationPropertyDelegate(userInputData, groupKey, { Group.valueOf(it) }, { Group.UNKNOWN })
 
     init {
         listOf(definiteSingularKey, indefiniteSingularKey, definitePluralKey, indefinitePluralKey).forEach {
-            registerTermKey(it)
+            userInputData.registerTermKey(it)
         }
 
-        listOf(genderKey, groupKey).forEach { registerConfigurationKey(it) }
+        listOf(genderKey, groupKey).forEach { userInputData.registerConfigurationKey(it) }
 
-        registerFlagKey(isIrregularKey)
+        userInputData.registerFlagKey(isIrregularKey)
 
-        connectInflectedTermWithWordStem(definiteSingularKey, indefiniteSingularKey)
-        connectInflectedTermWithWordStem(definitePluralKey, indefiniteSingularKey)
-        connectInflectedTermWithWordStem(indefinitePluralKey, indefiniteSingularKey)
+        userInputData.connectInflectedTermWithWordStem(definiteSingularKey, indefiniteSingularKey)
+        userInputData.connectInflectedTermWithWordStem(definitePluralKey, indefiniteSingularKey)
+        userInputData.connectInflectedTermWithWordStem(indefinitePluralKey, indefiniteSingularKey)
     }
 
-    fun getResolvedDefiniteSingular() = getResolvedInflectedTerm(definiteSingularKey)
-    fun getResolvedDefinitePlural() = getResolvedInflectedTerm(definitePluralKey)
-    fun getResolvedIndefinitePlural() = getResolvedInflectedTerm(indefinitePluralKey)
+    fun getResolvedDefiniteSingular() = userInputData.getResolvedInflectedTerm(definiteSingularKey)
+    fun getResolvedDefinitePlural() = userInputData.getResolvedInflectedTerm(definitePluralKey)
+    fun getResolvedIndefinitePlural() = userInputData.getResolvedInflectedTerm(indefinitePluralKey)
 }

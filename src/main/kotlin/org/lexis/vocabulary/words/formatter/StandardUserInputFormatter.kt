@@ -3,10 +3,10 @@ package org.lexis.vocabulary.words.formatter
 import org.lexis.vocabulary.words.formatter.dsl.Formatter
 import org.lexis.vocabulary.words.userinput.standard.StandardUserInputDecorator
 
-class StandardUserInputFormatter : UserInputFormatter<StandardUserInputDecorator<*>> {
-    override fun toShortRepresentation(input: StandardUserInputDecorator<*>): String = ""
+class StandardUserInputFormatter : UserInputFormatter<StandardUserInputDecorator> {
+    override fun toShortRepresentation(input: StandardUserInputDecorator): String = ""
 
-    override fun toFullRepresentation(input: StandardUserInputDecorator<*>, formatter: Formatter) {
+    override fun toFullRepresentation(input: StandardUserInputDecorator, formatter: Formatter) {
         formatter {
             phonetics {
                 whenGiven(input.phonetics) {

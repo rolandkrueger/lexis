@@ -4,7 +4,7 @@ import org.lexis.vocabulary.terms.EmptyTerm
 import org.lexis.vocabulary.terms.Term
 
 /**
- * Class to define a key which uniquely identifies a piece of user input data in a [UserInput].
+ * Class to define a key which uniquely identifies a piece of user input data in a [UserInputData].
  */
 inline class RegisteredDataKey(val key: String) {
     /**
@@ -20,9 +20,9 @@ typealias RegisteredInflectedTermKey = RegisteredDataKey
 typealias RegisteredTermKey = RegisteredDataKey
 
 /**
- * Implementation of the [UserInput] interface.
+ * Implementation of the [UserInputData] interface.
  */
-open class UserInputImpl : UserInput {
+open class UserInputDataImpl : UserInputData {
 
     private val terms by lazy { HashMap<RegisteredTermKey, Term>(8) }
     private val registeredTermKeys by lazy { HashSet<RegisteredTermKey>(8) }

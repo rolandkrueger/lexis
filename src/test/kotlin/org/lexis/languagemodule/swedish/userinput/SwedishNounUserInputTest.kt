@@ -1,12 +1,13 @@
 package org.lexis.languagemodule.swedish.userinput
 
 import org.junit.jupiter.api.Test
+import org.lexis.vocabulary.words.userinput.UserInputDataImpl
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 class SwedishNounUserInputTest {
 
-    val input: SwedishNounUserInput = SwedishNounUserInput()
+    val input: SwedishNounUserInput = SwedishNounUserInput(UserInputDataImpl())
 
     @Test
     fun `test gender and group`() {

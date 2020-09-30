@@ -6,7 +6,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 internal class DefaultUserInputWithStandardFieldsTest {
-    private val input = DefaultUserInputWithStandardFields("prefix")
+    private val input = DefaultUserInputWithStandardFields(UserInputDataImpl(), "prefix")
 
     @Test
     internal fun testTerm() {

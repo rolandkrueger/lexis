@@ -10,6 +10,6 @@ class SwedishDefaultWordClass : AbstractWordClass<DefaultUserInputWithStandardFi
     override fun getUserInputFormatter(): UserInputFormatter<DefaultUserInputWithStandardFields> =
             DefaultUserInputWithStandardFieldsFormatter()
 
-    override fun createUserInputObject(): DefaultUserInputWithStandardFields = DefaultUserInputWithStandardFields("swedish")
+    override fun createUserInputObject(): DefaultUserInputWithStandardFields = DefaultUserInputWithStandardFields(keyPrefix = "swedish")
 
 }

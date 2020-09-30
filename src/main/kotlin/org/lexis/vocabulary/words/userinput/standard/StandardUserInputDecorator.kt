@@ -3,25 +3,34 @@ package org.lexis.vocabulary.words.userinput.standard
 import org.lexis.vocabulary.terms.Term
 import org.lexis.vocabulary.words.formatter.StandardUserInputFormatter
 import org.lexis.vocabulary.words.userinput.RegisteredTermKey
-import org.lexis.vocabulary.words.userinput.UserInput
 import org.lexis.vocabulary.words.userinput.TermPropertyDelegate
+import org.lexis.vocabulary.words.userinput.UserInputData
 
-open class StandardUserInputDecorator<T : UserInput>(val delegatedUserInput: T, keyPrefix: String) : UserInput by delegatedUserInput {
+interface StandardUserInputDecorator {
+    var description: Term
+    var example: Term
+    var phonetics: Term
+
+    fun getStandardUserInputFormatter(): StandardUserInputFormatter
+}
+
+open class StandardUserInputDecoratorImpl(keyPrefix: String, userInputData: UserInputData) : StandardUserInputDecorator {
+
     val descriptionKey = RegisteredTermKey("$keyPrefix.description")
     val exampleKey = RegisteredTermKey("$keyPrefix.example")
     val phoneticsKey = RegisteredTermKey("$keyPrefix.phonetics")
 
-    var description: Term by TermPropertyDelegate(descriptionKey)
-    var example: Term by TermPropertyDelegate(exampleKey)
-    var phonetics: Term by TermPropertyDelegate(phoneticsKey)
+    override var description: Term by TermPropertyDelegate(userInputData, descriptionKey)
+    override var example: Term by TermPropertyDelegate(userInputData, exampleKey)
+    override var phonetics: Term by TermPropertyDelegate(userInputData, phoneticsKey)
 
     init {
         listOf(descriptionKey, exampleKey, phoneticsKey).forEach {
-            registerTermKey(it)
+            userInputData.registerTermKey(it)
         }
     }
 
-    fun getStandardUserInputFormatter(): StandardUserInputFormatter {
+    override fun getStandardUserInputFormatter(): StandardUserInputFormatter {
         return StandardUserInputFormatter()
     }
 }

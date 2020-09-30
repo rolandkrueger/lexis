@@ -37,6 +37,6 @@ class SwedishAdjectiveUserInputFormatter : UserInputFormatter<SwedishAdjectiveUs
             }
         }
 
-        input.getStandardUserInputFormatter().toFullRepresentation(input.delegatedUserInput, formatter)
+//        input.getStandardUserInputFormatter().toFullRepresentation(input.delegatedUserInput, formatter)
     }
 }

@@ -9,6 +9,6 @@ import org.lexis.vocabulary.words.wordclass.WordClassEnum
 class SwedishAdjectiveWordClass : AbstractWordClass<SwedishAdjectiveUserInput>(WordClassEnum.ADJECTIVE, "swedish.wordclass.adjective") {
 
     override fun getUserInputFormatter(): UserInputFormatter<SwedishAdjectiveUserInput> = SwedishAdjectiveUserInputFormatter()
-    override fun createUserInputObject(): SwedishAdjectiveUserInput = SwedishAdjectiveUserInput()
 
+    override fun createUserInputObject(): SwedishAdjectiveUserInput = SwedishAdjectiveUserInput()
 }

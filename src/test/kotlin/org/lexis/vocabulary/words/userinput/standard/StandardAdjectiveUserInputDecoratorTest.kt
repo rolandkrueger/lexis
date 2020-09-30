@@ -1,15 +1,15 @@
 package org.lexis.vocabulary.words.userinput.standard
 
 import org.lexis.vocabulary.terms.Term
-import org.lexis.vocabulary.words.userinput.UserInputImpl
+import org.lexis.vocabulary.words.userinput.UserInputDataImpl
 import org.junit.jupiter.api.Test
-import org.lexis.vocabulary.words.userinput.TermPropertyDelegate
+import org.lexis.vocabulary.words.userinput.UserInputData
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 internal class StandardAdjectiveUserInputDecoratorTest {
 
-    private var testInput: TestAdjectiveUserInput = TestAdjectiveUserInput()
+    private var testInput: TestAdjectiveUserInput = TestAdjectiveUserInput(UserInputDataImpl())
 
     @Test
     fun `use positive and example terms`() {
@@ -18,7 +18,7 @@ internal class StandardAdjectiveUserInputDecoratorTest {
 
         expectThat(testInput) {
             get { positive.getUserInput() }.isEqualTo("positive")
-            get { delegatedUserInput.example.getUserInput() }.isEqualTo("example")
+            get { example.getUserInput() }.isEqualTo("example")
         }
     }
 
@@ -35,8 +35,5 @@ internal class StandardAdjectiveUserInputDecoratorTest {
     }
 }
 
-private class TestAdjectiveUserInput :
-        StandardAdjectiveUserInputDecorator<StandardUserInputDecorator<UserInputImpl>>(StandardUserInputDecorator(UserInputImpl(), "test"), "test") {
-
-    var example by TermPropertyDelegate(delegatedUserInput.exampleKey)
-}
+private class TestAdjectiveUserInput(userInputData : UserInputData) : StandardUserInputDecorator by StandardUserInputDecoratorImpl("test", userInputData),
+        StandardAdjectiveUserInputDecorator by StandardAdjectiveUserInputDecoratorImpl(userInputData, "test")

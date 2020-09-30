@@ -44,5 +44,5 @@ fun termFromCanonicalInput() {
 }
 
 fun main() {
-    inflectedTermWithFullWordStemDemo()
+    termFromCanonicalInput()
 }
