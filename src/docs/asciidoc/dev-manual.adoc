@@ -54,7 +54,7 @@ förtjäna, ~r, ~de [fœ(r)'çɛːna]
 *Comment*: förvärva som lön eller vinst
 |=======
 
-You can see a lot going on here. First of all, it can be stated that it is not enough to just have one word in your native language and the corresponding translation if you want to properly learn a foreign language. Very simple vocabulary trainers would let you learn exactly like that: they offer you a text input field for a word in your mother tongue and one text input field for its translation -- that's it. However, this is less than optimal for learning a foreign language.
+You can see a lot going on here. First of all, it can be stated that it is not enough to just have one word in your native language and the corresponding translation if you want to properly learn a foreign language. Very simple vocabulary trainers would let you learn exactly like that: they offer you a text input field for a word in your first language and one text input field for its translation -- that's it. However, this is less than optimal for learning a foreign language.
 
 In fact, you need more data: for each word, it would be helpful to have one or more example sentences that show the correct usage of the word in the right context. Some words need a bit more explaining, so a comment would be useful. This comment could be the word's description from a monolingual dictionary. Furthermore, it is important to have the phonetic spelling available with https://en.wikipedia.org/wiki/International_Phonetic_Alphabet[IPA symbols], and if appropriate the inflected versions (such as comparative and superlative, or inflections for the different tenses) of the word should be available, too.
 
@@ -72,7 +72,7 @@ There are three types of terms:
 - Word stem terms
 - Inflected terms
 
-A *regular term* is just a container for a single user provided text input. This could be, for instance, the German word _verdienen_ from the example in chapter <<data-model_general-overview>>.
+A *regular term* is just a container for a single user provided text input. This could be, for instance, the German word _verdienen_ from the example in section  <<data-model_general-overview>>.
 
 In addition, a term allows the usage of certain control characters which allow the user to give particular parts of the term input a special meaning. With these, word stem terms and inflected terms can be defined.
 
@@ -186,7 +186,7 @@ Constructing concrete input classes is done through delegation. In the simplest 
 include::{sourceDir}org/lexis/vocabulary/words/userinput/DefaultUserInput.kt[]
 ----
 
-This class can be used when it suffices to store a single value for a given language, e.g. the translation of a vocabulary word in your own native language. In that case, you don't need more than one term, since you don't need to explicitly learn the grammatical rules of your own mother tongue.
+This class can be used when it suffices to store a single value for a given language, e.g. the translation of a vocabulary word in your own native language. In that case, you don't need more than one term, since you don't need to explicitly learn the grammatical rules of your own native tongue.
 
 Let's go through this class and see how a regular term can be registered and used in a `{UserInputData_short}`. `{DefaultUserInputImpl}` receives a `{UserInputDataImpl_short}` object in its constructor. Using this object as a delegation target, it can use its internal term and data storage facilities. Next, a companion object defines a registered key for the single term of the default user input. This key is registered as a term key in the `init` block.
 
@@ -237,6 +237,42 @@ Make sure at least one of the implemented interfaces or the combining user input
 
 === Word Classes
 
-=== Languages
+Now that we have covered the necessary data classes which are needed to store the different types of user vocabulary input, we need to take a look at how these classes can be used. The ultimate goal is to allow a user to enter vocabulary words consisting of the meaning of the word in the user's native language and one or more translations into foreign languages. These vocabulary words need to be properly displayed on the UI and they will be used to create vocabulary quizzes. As we have learned in the previous sections, a vocabulary word may consist of more than one term. The number of terms to be used for one word and the terms' grammatical meaning depend on the type of vocabulary word. This means, it has to be differentiated between nouns, adjectives, verbs, phrasal verbs, and so on.
+
+In order to do so, Lexis uses the concept of word classes. A word class defines a particular grammatical type of word, such as noun, verb, adjective, etc. A word class is represented by the abstract class `{AbstractWordClass}`. Every language module must provide an own subclass of `{AbstractWordClass_short}` for each supported word class.
+
+A word class is identified by an enum `{WordClassEnum}` which defines the concrete word class (e.g. `NOUN`, `ADVERB`, `IDIOM`, `NOUN`, etc.).
+
+`{AbstractWordClass_short}` specifies a number of abstract methods to be implemented by subclasses. These methods will later be called by the application's main logic to generically provide the word class-specific data objects needed by the application. For example, method `createUserInputObject()` will create a new user input object which goes with the word class.
+
+Let's take a look at the Swedish word class for nouns as an example:
+
+[source,java]
+.Source code of {DefaultUserInputWithStandardFields}
+----
+include::{sourceDir}org/lexis/languagemodule/swedish/wordclasses/SwedishNounWordClass.kt[]
+----
+
+As you can see, `{AbstractWordClass_short}` has a generic type parameter which is set to the concrete user input type used for this word class. In this case we use the input class for Swedish nouns.
+
+=== Languages and Language Modules
+
+A language is represented in Lexis by a data class `{Language}`. Objects of this class are used as identifiers (such as map keys) to handle language-specific data. A language object provides the following data:
+
+- the `Locale` for the language
+- a translation key for the language's name so that it can be translated on the UI
+- and a UUID to uniquely identify the language.
+
+Everything that is needed to define the features of a supported language in Lexis is composed in a `{LanguageModule}`. This abstract class provides all methods necessary to access language-specific data, such as all provided word classes or the available abbreviation alternatives (this will be explained later on).
+
+To define a language module for one particular language, you need to derive a class from `{LanguageModule}` and implement the abstract methods. In the language module's `init` block, you have to register every word class which is available for that particular language. By that, the language module is capable of providing all necessary data needed by the application to handle one particular language.
 
 === Vocabulary Words
+
+Up to this point we have talked about how to handle the vocabulary data for one particular language. We have seen how to define user input classes, how to classify them into word classes, and how to define a complete language module. The next step is to combine the data of at least two languages: the user's first language and the foreign language she wants to learn.
+
+This is achieved with class `{VocabularyWord}`: an instance of this class represents a single item from a vocabulary list. In section  <<data-model_general-overview>> we have already seen an example for a complete vocabulary word. This example consisted of three different languages: German as the user's native language and English and Swedish as the foreign languages.
+
+`{VocabularyWord_short}` objects maintain the data of all these languages. Learning a vocabulary list with Lexis basically means to create a list of ``{VocabularyWord_short}``s and work with this list.
+
+A `{VocabularyWord_short}` contains a map of translations for every language learned by the user and a translation for the user's first language. The translation map's keys are the respective `{Language_short}` objects. The map's keys are Pairs of the concrete `{AbstractWordClass_short}` and a corresponding user input object.

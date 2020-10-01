@@ -18,3 +18,12 @@
 :StandardUserInputDecoratorImpl_short: StandardUserInputDecoratorImpl
 :DefaultUserInputWithStandardFields: org.lexis.vocabulary.words.userinput.DefaultUserInputWithStandardFields
 :HasValues: org.lexis.data.HasValues
+
+:AbstractWordClass: org.lexis.vocabulary.words.wordclass.AbstractWordClass
+:AbstractWordClass_short: AbstractWordClass
+:WordClassEnum: org.lexis.vocabulary.words.wordclass.WordClassEnum
+:Language: org.lexis.vocabulary.language.Language
+:Language_short: Language
+:LanguageModule: org.lexis.vocabulary.language.LanguageModule
+:VocabularyWord: org.lexis.vocabulary.words.VocabularyWord
+:VocabularyWord_short: VocabularyWord

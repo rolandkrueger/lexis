@@ -12,7 +12,7 @@ import org.lexis.vocabulary.terms.Term
 
 fun wordStemDemo() {
     val wordStemTerm = Term.fromUserInput("(to) <under>go")
-    val wordStem = wordStemTerm.getWordStem() // => "under"
+    val wordStem = wordStemTerm.getWordStem() // => under
 }
 
 fun inflectedTermDemo() {
@@ -20,7 +20,7 @@ fun inflectedTermDemo() {
     val inflectedTerm = Term.fromUserInput("--orna")
 
     val resolvedInflectedTerm: Term = inflectedTerm.getResolvedInflectedTerm(wordStemTerm)
-    val resolvedString = resolvedInflectedTerm.getDisplayString() // => "klockorna"
+    val resolvedString = resolvedInflectedTerm.getDisplayString() // => klockorna
 }
 
 fun inflectedTermWithFullWordStemDemo() {
