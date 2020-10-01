@@ -3,6 +3,8 @@ package org.lexis.vocabulary.language
 import org.lexis.quiz.abbreviation.AbbreviationAlternatives
 import org.lexis.vocabulary.words.wordclass.AbstractWordClass
 import org.lexis.vocabulary.words.wordclass.WordClassEnum
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * A language module integrates all required classes for one particular foreign (or native) language. It is the central
@@ -27,7 +29,7 @@ abstract class LanguageModule(val targetLanguage: Language,
                               var iconId: String = "",
                               val isDefault: Boolean = false) {
 
-    private val wordClasses: MutableMap<WordClassEnum, AbstractWordClass<*>> = HashMap()
+    private val wordClasses: MutableMap<WordClassEnum, AbstractWordClass<*>> = EnumMap(WordClassEnum::class.java)
 
     /**
      * Adds a word class implementation to the set of available word classes for this module. Language module

@@ -9,5 +9,4 @@ import java.util.*
  * @property languageNameKey Translation key for the language's name.
  * @property id The language's identifier. Is initialized with a random [UUID] by default.
  */
-data class Language(val locale: Locale, val languageNameKey: String, val id: String = UUID.randomUUID().toString()) {
-}
+data class Language(val locale: Locale, val languageNameKey: String, val id: String = UUID.randomUUID().toString())
