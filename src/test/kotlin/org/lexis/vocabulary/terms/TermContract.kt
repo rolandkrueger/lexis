@@ -2,9 +2,11 @@ package org.lexis.vocabulary.terms
 
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
+import org.lexis.tests.assertions.canonicalRepresentationEquals
+import org.lexis.tests.assertions.displayStringEquals
+import org.lexis.tests.assertions.isEmpty
+import org.lexis.tests.assertions.userInputEquals
 import strikt.api.expectThat
-import strikt.assertions.isEqualTo
-import strikt.assertions.isTrue
 
 
 internal interface TermContract<T : Term> {
@@ -17,8 +19,7 @@ internal interface TermContract<T : Term> {
     @Test
     fun `test isEmpty`() {
         val emptyTerm = createEmptyTerm()
-        expectThat(emptyTerm.isEmpty())
-                .isTrue()
+        expectThat(emptyTerm).isEmpty()
     }
 
     @Test
@@ -26,10 +27,9 @@ internal interface TermContract<T : Term> {
         val term = createFromUserInput("-- # < > |")
         assumeFalse { term is EmptyTerm }
 
-        expectThat(term) {
-            get { getCanonicalRepresentation() }.isEqualTo("#{-} #{#} #{<} #{>} #{|}")
-            get { getDisplayString() }.isEqualTo("~ # < > |")
-        }
+        expectThat(term)
+                .canonicalRepresentationEquals("#{-} #{#} #{<} #{>} #{|}")
+                .displayStringEquals("~ # < > |")
     }
 
     @Test
@@ -37,9 +37,8 @@ internal interface TermContract<T : Term> {
         val term = createFromCanonicalInput("#{-} #{#} #{<} #{>} #{|}")
         assumeFalse { term is EmptyTerm }
 
-        expectThat(term) {
-            get { getUserInput() }.isEqualTo("-- # < > |")
-            get { getDisplayString() }.isEqualTo("~ # < > |")
-        }
+        expectThat(term)
+                .userInputEquals("-- # < > |")
+                .displayStringEquals("~ # < > |")
     }
 }

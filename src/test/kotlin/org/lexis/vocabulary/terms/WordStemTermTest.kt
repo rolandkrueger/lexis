@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
+import org.lexis.tests.assertions.wordStemEquals
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import java.util.stream.Stream
@@ -28,8 +29,6 @@ internal class WordStemTermTest : TermContract<Term> {
     fun `word stem is properly resolved`(input: String, expectedWordStem: String) {
         val wordStemTerm = createFromUserInput(input)
 
-        expectThat(wordStemTerm) {
-            get { getWordStem() }.isEqualTo(expectedWordStem)
-        }
+        expectThat(wordStemTerm).wordStemEquals(expectedWordStem)
     }
 }
