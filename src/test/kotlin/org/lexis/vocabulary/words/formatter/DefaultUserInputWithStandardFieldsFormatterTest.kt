@@ -31,7 +31,7 @@ internal class DefaultUserInputWithStandardFieldsFormatterTest {
 
         formatter.toFullRepresentation(input, markdownFormatter)
         expectThat(markdownFormatter.asString()).isEqualTo("""
-            **test term**  [test term phonetics]
+            **test term** [test term phonetics]
 
             ---
 

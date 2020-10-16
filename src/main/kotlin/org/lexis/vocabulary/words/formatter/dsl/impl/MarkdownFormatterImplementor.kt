@@ -9,7 +9,7 @@ class MarkdownFormatter : Formatter(MarkdownFormatterImplementor()) {
 }
 
 class MarkdownFormatterImplementor : FormatterImplementor {
-    val buffer = StringBuilder()
+    private val buffer = StringBuilder()
 
     override fun asString(): String = buffer.toString()
 
@@ -34,32 +34,17 @@ class MarkdownFormatterImplementor : FormatterImplementor {
         buffer.append(" ")
     }
 
-    override fun print(term: Term) {
-        if (!term.isEmpty()) {
-            buffer.append(term.getDisplayString())
-        }
+    override fun text(text: String) {
+        buffer.append(text)
     }
 
-    override fun println(term: Term) {
-        print(term)
-        newLine()
-    }
-
-    override fun String.unaryPlus() {
-        buffer.append(this)
-    }
-
-    override fun newLine() {
+    override fun newline() {
         buffer.append("\n\n")
     }
 
     override fun divider() {
-        newLine()
+        newline()
         buffer.append("---")
-        newLine()
-    }
-
-    override fun comma() {
-        buffer.append(", ")
+        newline()
     }
 }

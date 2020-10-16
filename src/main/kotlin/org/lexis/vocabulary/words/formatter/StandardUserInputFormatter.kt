@@ -8,11 +8,8 @@ class StandardUserInputFormatter : UserInputFormatter<StandardUserInputDecorator
 
     override fun toFullRepresentation(input: StandardUserInputDecorator, formatter: Formatter) {
         formatter {
-            phonetics {
-                whenGiven(input.phonetics) {
-                    print(input.phonetics)
-                }
-            }
+            phonetics (input.phonetics)
+
             extra {
                 // TODO: i18n
                 whenGiven(input.description) {

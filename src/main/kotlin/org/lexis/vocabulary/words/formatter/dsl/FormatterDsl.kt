@@ -6,7 +6,7 @@ import org.lexis.vocabulary.terms.Term
 annotation class FormatterDsl
 
 @FormatterDsl
-abstract class Formatter(val implementor: FormatterImplementor) : Format by implementor {
+abstract class Formatter(val implementor: FormatterImplementor) {
 
     operator fun invoke(block: Formatter.() -> Unit) {
         implementor.begin()
@@ -14,127 +14,86 @@ abstract class Formatter(val implementor: FormatterImplementor) : Format by impl
         implementor.end()
     }
 
-    fun main(block: MAIN_FORMATTER.() -> Unit) {
-        MAIN_FORMATTER(this).apply(block)
+    fun print(term: Term) {
+        whenGiven(term) {
+            implementor.text(term.getDisplayString())
+        }
     }
 
-    fun phonetics(block: PHONETICS_FORMATTER.() -> Unit) {
-        PHONETICS_FORMATTER(this).apply(block)
+    fun println(term: Term) {
+        print(term)
+        implementor.newline()
     }
 
-    fun extra(block: EXTRA_FORMATTER.() -> Unit) {
-        implementor.divider()
-        EXTRA_FORMATTER(this).apply(block)
+    fun main(block: Formatter.() -> Unit) {
+        bold {
+            apply(block)
+        }
     }
 
-    override fun bold(block: Format.() -> Unit): Format {
+    fun phonetics(phoneticsTerm: Term) {
+        squareBrackets {
+            print(phoneticsTerm)
+        }
+    }
+
+    fun extra(block: Formatter.() -> Unit) {
+        divider()
+        apply(block)
+    }
+
+    fun bold(block: Formatter.() -> Unit): Formatter {
         implementor.startBold()
         apply(block)
         implementor.endBold()
         return this
     }
 
-    override fun emphasize(block: Format.() -> Unit): Format {
+    fun emphasize(block: Formatter.() -> Unit): Formatter {
         implementor.startEmphasize()
         apply(block)
         implementor.endEmphasize()
         return this
     }
 
-    override fun parenthesize(block: Format.() -> Unit): Format {
-        +" ("
+    operator fun String.unaryPlus() = implementor.text(this)
+
+    fun parenthesize(block: Formatter.() -> Unit): Formatter {
+        implementor.openParenthesis()
         apply(block)
-        +")"
+        implementor.closeParenthesis()
         return this
     }
 
-    override fun squareBrackets(block: Format.() -> Unit): Format {
-        +" ["
+    fun squareBrackets(block: Formatter.() -> Unit): Formatter {
+        implementor.openBracket()
         apply(block)
-        +"]"
+        implementor.closeBracket()
         return this
     }
 
-    override fun comma() {
-        +", "
-    }
-}
+    fun comma() = implementor.text(",")
+    fun newline() = implementor.newline()
+    fun divider() = implementor.divider()
 
-interface FormatterImplementor : Format {
-    fun begin()
-    fun end()
-
-    fun startBold()
-    fun endBold()
-
-    fun startEmphasize()
-    fun endEmphasize()
-    fun asString(): String
-}
-
-@FormatterDsl
-interface Format {
-    fun print(term: Term)
-    fun println(term: Term)
-    operator fun String.unaryPlus()
-    fun newLine()
-    fun divider()
-    fun comma()
-    fun emphasize(block: Format.() -> Unit) = apply(block)
-    fun bold(block: Format.() -> Unit) = apply(block)
-    fun parenthesize(block: Format.() -> Unit) = apply(block)
-    fun squareBrackets(block: Format.() -> Unit) = apply(block)
-    fun printBlock(block: Format.() -> Unit) = apply(block)
-    fun whenGiven(term: Term, block: Format.() -> Unit) {
+    fun whenGiven(term: Term, block: Formatter.() -> Unit) {
         if (!term.isEmpty()) {
             apply(block)
         }
     }
 
-    fun whenAnyGiven(terms: Set<Term>, block: Format.() -> Unit) {
+    fun whenAnyGiven(terms: Set<Term>, block: Formatter.() -> Unit) {
         if (terms.any { term -> !term.isEmpty() }) {
             apply(block)
         }
     }
 
-    fun whenAllGiven(terms: Set<Term>, block: Format.() -> Unit) {
+    fun whenAllGiven(terms: Set<Term>, block: Formatter.() -> Unit) {
         if (terms.all { term -> !term.isEmpty() }) {
             apply(block)
         }
     }
 
-    fun join(terms: List<Term>) {
-        terms.map { term -> term.getDisplayString() }.joinToString()
-    }
-}
-
-@FormatterDsl
-class MAIN_FORMATTER(val formatter: Formatter) : Format by formatter {
-    override fun print(term: Term) {
-        bold {
-            this@MAIN_FORMATTER.formatter.print(term)
-        }
-    }
-}
-
-@FormatterDsl
-class EXTRA_FORMATTER(val formatter: Formatter) : Format by formatter
-
-@FormatterDsl
-class PHONETICS_FORMATTER(val formatter: Formatter) : Format by formatter {
-    override fun printBlock(block: Format.() -> Unit): Format {
-        squareBrackets(block)
-        return this
-    }
-
-    override fun print(term: Term) {
-        squareBrackets {
-            this@PHONETICS_FORMATTER.formatter.print(term)
-        }
-    }
-
-    override fun println(term: Term) {
-        print(term)
-        newLine()
-    }
+    fun join(terms: List<Term>): String =
+            terms.map { term -> term.getDisplayString() }.joinToString()
 }
